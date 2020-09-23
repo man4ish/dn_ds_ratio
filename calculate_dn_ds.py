@@ -34,31 +34,104 @@ def get_coverage_product(num_A, num_C, num_G, num_T):
     coverage_list = [num_AC, num_AG, num_AT, num_CG, num_CT, num_GT]
     return coverage_list
 
+def get_allele_freq(pos, alleles):
+    #print(alleles)
+    #print(pos)
+    for allele in alleles:
+        if pos in allele.keys():
+           #print(allele)
+           alt_frq = allele[pos][1]['alt']['freq']
+           ref_frq = allele[pos][0]['ref']['freq']
+           allele_prop = int(alt_frq) / (int(ref_frq) + int(alt_frq))
+           ref_prop = int(ref_frq) /(int(ref_frq) + int(alt_frq))
+           #print(ref_prop)
+           allele_dict = {"ref_freq": ref_prop, "allele_freq": allele_prop}
+           return allele_dict
+        else:
+           allele_dict = {"ref_freq": 1, "allele_freq": 0}
+
+    return allele_dict
+
+
 def possible_codon(key, alleles):
     '''generate a list of possible codon with given position and allele list'''
 
     codon = {}
+
     ref  = key.split("-")[2]
     for i in range(3):
         codon[i+1] = [ref[i]]
 
     for allele in alleles:
         for pos in allele:
+            codon[pos].append(allele[pos][1]['alt']['allele'])
+    '''
+    for allele in alleles:
+        for pos in allele:
             alt_allele_list = allele[pos]
             for alt_allele in alt_allele_list:
                 codon[pos].append(alt_allele)
+    '''
 
+    freq = []
     possible_cdn_list = []
+
+
+
+    nt_frq1 = get_allele_freq(1, alleles)
+    nt_frq2 = get_allele_freq(2, alleles)
+    nt_frq3 = get_allele_freq(3, alleles)
+    print(nt_frq1)
+    print(nt_frq2)
+    print(nt_frq3)
+
+
     for i in range(len(codon[1])):
         for j in range(len(codon[2])):
             for k in range(len(codon[3])):
+                pos1 = 1
+                pos2 = 2
+                pos3 = 3
+                nt1 = codon[1][i]
+                nt2 = codon[2][i]
+                nt3 = codon[3][i]
+
                 possible_cdn_list.append(codon[1][i] + codon[2][j] + codon[3][k])
+
+
+    ''' calculating frequency at each position in codon'''
+    '''
+    for allele in alleles:
+        if 1 in allele:
+            alt_frq  = allele[1][1]['alt']['freq']
+            ref_freq = allele[1][0]['ref']['freq']
+            nt_frq1 = int (alt_frq)/(int(ref_freq) + int(alt_frq))
+        else:
+            nt_frq1 = 1
+        if 2 in allele:
+            alt_frq  = allele[2][1]['alt']['freq']
+            ref_freq = allele[2][0]['ref']['freq']
+            nt_frq2 = int (alt_frq)/(int(ref_freq) + int(alt_frq))
+        else:
+            nt_frq2 = 1
+        if 3 in allele:
+            alt_frq  = allele[3][1]['alt']['freq']
+            ref_freq = allele[3][0]['ref']['freq']
+            nt_frq3 = int (alt_frq)/(int(ref_freq) + int(alt_frq))
+        else:
+            nt_frq3 = 1
+
+        #print("freq=" + str(nt_frq1) + "\t" + str(nt_frq2) + "\t" + str(nt_frq3))
+     '''
+
+
+
     return possible_cdn_list
 
 
 def get_all_possible_codon(codon_list):
     '''get all possible codon with given allele'''
-    print(codon_list)
+    #print(codon_list)
     cdn_dict = {}
     for cdn_lst in codon_list:
         key = str(cdn_lst[0]) + "-" + str(cdn_lst[6]) + "-" + cdn_lst[7]
@@ -67,23 +140,40 @@ def get_all_possible_codon(codon_list):
            cdn_dict[key] = []
            pos_dict = {}
            pos_in_codon =cdn_lst[5]
-           pos_dict[pos_in_codon] = [cdn_lst[2]]
+           ref_base = cdn_lst[1]
+           freq = cdn_lst[9]
+           alt_base = cdn_lst[2]
+           allele_dict = [{'ref': {'allele': ref_base, 'freq': freq[ref_base]}},{'alt': {'allele': alt_base, 'freq': freq[alt_base]}}]
+
+           pos_dict[pos_in_codon] = allele_dict
            cdn_dict[key].append(pos_dict)
+
            #allele_frq_dict = {}
            #allele_frq_dict[pos_in_codon] = cdn_lst[9]
            #cdn_dict[key].append(allele_frq_dict)
         else:
             pos_dict = {}
             pos_in_codon = cdn_lst[5]
-            pos_dict[pos_in_codon] = [cdn_lst[2]]
-            #allele_frq_dict = {}
-            #allele_frq_dict[pos_in_codon] = cdn_lst[9]
+            ref_base = cdn_lst[1]
+            freq = cdn_lst[9]
+            alt_base = cdn_lst[2]
+            allele_dict = [{'ref': {'allele': ref_base, 'freq': freq[ref_base]}}, {'alt': {'allele': alt_base, 'freq': freq[alt_base]}}]
+            pos_dict[pos_in_codon] = allele_dict
+
             cdn_dict[key].append(pos_dict)
-            #cdn_dict[key].append(allele_frq_dict)
+            # allele_frq_dict = {}
+            # allele_frq_dict[pos_in_codon] = cdn_lst[9]
+            # cdn_dict[key].append(allele_frq_dict)
+    all_codon = possible_codon('Chr01-13-TTT', cdn_dict['Chr01-13-TTT'])
+    exit(all_codon)
+    #exit(cdn_dict['Chr01-13-TTT'][0][3][1]['alt']['allele'])
 
     for key in cdn_dict:
         all_codon = possible_codon(key, cdn_dict[key])
+        print("****")
+        print(cdn_dict[key])
         print(all_codon)
+        print("****")
 
     return cdn_dict
 
