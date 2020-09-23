@@ -26,12 +26,31 @@ def get_all_possible_path():
 
 def get_triplets(seq, gene_id):
     codon_list = []
-    print(len(seq))
+    mutation_codon_data = getmutation_table()
     for i in range(int(len(seq)/3)):
+        codon = []
         start = 3*i
         end = 3*i+3
-        print(gene_id +"\t"+ seq[start:end] + "\t" + str(start) +"\t" + str(end) +"\t"+ str(3*i+1) + ","+ str(3*i+2) +"," +str(3*i+3))
-        codon_list.append(seq[start:end])
+        codon.append(gene_id)
+        triplet =seq[start:end]
+        N = 0
+        S = 0
+        N1 = mutation_codon_data[triplet + "_N_1"]
+        N2 = mutation_codon_data[triplet + "_N_2"]
+        N3 = mutation_codon_data[triplet + "_N_3"]
+        S1 = mutation_codon_data[triplet + "_S_1"]
+        S2 = mutation_codon_data[triplet + "_S_2"]
+        S3 = mutation_codon_data[triplet + "_S_3"]
+        N = N + (N1 + N2 + N3)
+        S = S + (S1 + S2 + S3)
+        codon.append(seq[start:end])
+        codon.append(start+1)
+        codon.append(end)
+        codon.append(str(3*i+1) + ", " + str(3*i+2) + ", " + str(3*i+3))
+        codon.append(N)
+        codon.append(S)
+        codon_list.append(codon)
+
     return codon_list
     
 def read_refseq(fasta_file):
@@ -126,6 +145,8 @@ def read_vcf(vcf_file):
 
 get_gff_file("sample.gtf")
 seq = read_refseq("sample.fa")
+
+'''
 data = read_vcf("snpeff_sample.ann.vcf")
 print(data)
 
@@ -136,39 +157,13 @@ with open('variant_info.tsv', 'a') as myfile:
     wr = csv.writer(myfile, delimiter='\t')
     for data_list in data:
         wr.writerow(data_list)
-
-# sequence
-
-
-#table.to_csv("output.csv", sep='\t', index=False)
-
-
-
-#print(seq)
-#print(gen_codonlist(seq, 1, 18, "gene_id1_cds1"))
+'''
+print(gen_codonlist(seq, 1, 18, "gene_id1_cds1"))
 
 #codonlist = get_triplets(seq)
 
 
-'''Calculating N and S for reference genome
-N = 0
-S = 0
-
-for codon in codonlist:
-    N1 = mutation_codon_data[codon+"_N_1"]
-    N2 = mutation_codon_data[codon+"_N_2"]
-    N3 = mutation_codon_data[codon+"_N_3"]
-    S1 = mutation_codon_data[codon+"_S_1"]
-    S2 = mutation_codon_data[codon+"_S_2"]
-    S3 = mutation_codon_data[codon+"_S_3"]    
-    N = N + (N1 + N2 + N3)
-    S = S + (S1 + S2 + S3)
-
-print(N)
-print(S)
-
-
-
+'''
 Calculating Nd and Sd for input vcf file
 with open("input.vcf") as fvp:
     vcfline = fvp.readline()
