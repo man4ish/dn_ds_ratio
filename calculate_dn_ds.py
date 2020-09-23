@@ -1,10 +1,7 @@
 #!/usr/bin/python
 import json
 import csv
-import re
-import sys
 import os
-import pandas as pd
 
 def get_codon():
     ''' readinfg codon json'''
@@ -37,23 +34,63 @@ def get_coverage_product(num_A, num_C, num_G, num_T):
     coverage_list = [num_AC, num_AG, num_AT, num_CG, num_CT, num_GT]
     return coverage_list
 
+def possible_codon(key, alleles):
+    '''generate a list of possible codon with given position and allele list'''
+
+    codon = {}
+    ref  = key.split("-")[2]
+    for i in range(3):
+        codon[i+1] = [ref[i]]
+
+    for allele in alleles:
+        for pos in allele:
+            alt_allele_list = allele[pos]
+            for alt_allele in alt_allele_list:
+                codon[pos].append(alt_allele)
+
+    possible_cdn_list = []
+    for i in range(len(codon[1])):
+        for j in range(len(codon[2])):
+            for k in range(len(codon[3])):
+                possible_cdn_list.append(codon[1][i] + codon[2][j] + codon[3][k])
+    return possible_cdn_list
+
+
 def get_all_possible_codon(codon_list):
     '''get all possible codon with given allele'''
-    '''use multimap for storing gene-cds-start_pos as key and corresponding value'''
+    print(codon_list)
     cdn_dict = {}
     for cdn_lst in codon_list:
         key = str(cdn_lst[0]) + "-" + str(cdn_lst[6]) + "-" + cdn_lst[7]
         if not key in cdn_dict:
 
            cdn_dict[key] = []
-           cdn_dict[key].append([cdn_lst[5], cdn_lst[2]])
+           pos_dict = {}
+           pos_in_codon =cdn_lst[5]
+           pos_dict[pos_in_codon] = [cdn_lst[2]]
+           cdn_dict[key].append(pos_dict)
+           #allele_frq_dict = {}
+           #allele_frq_dict[pos_in_codon] = cdn_lst[9]
+           #cdn_dict[key].append(allele_frq_dict)
         else:
-            cdn_dict[key].append([cdn_lst[5], cdn_lst[2]])
+            pos_dict = {}
+            pos_in_codon = cdn_lst[5]
+            pos_dict[pos_in_codon] = [cdn_lst[2]]
+            #allele_frq_dict = {}
+            #allele_frq_dict[pos_in_codon] = cdn_lst[9]
+            cdn_dict[key].append(pos_dict)
+            #cdn_dict[key].append(allele_frq_dict)
+
+    for key in cdn_dict:
+        all_codon = possible_codon(key, cdn_dict[key])
+        print(all_codon)
+
     return cdn_dict
 
 
 def get_triplets(seq, gene_id):
     '''generate triplets from ref seq'''
+
     codon_list = []
     mutation_codon_data = getmutation_table()
     for i in range(int(len(seq)/3)):
@@ -83,7 +120,8 @@ def get_triplets(seq, gene_id):
     return codon_list
     
 def read_refseq(fasta_file):
-    'read fasta file'
+    '''read fasta file'''
+
     seq = ''
     with open(fasta_file) as fp:
         line = fp.readline()
@@ -173,11 +211,12 @@ def read_vcf(vcf_file):
                print("DP=" + sample[DP_index] + "\tAD=" +sample[AD_index])
                coverage[rec[3]] = (sample[AD_index]).split(",")[0]
                coverage[rec[4]] = (sample[AD_index]).split(",")[1]  #for single allele
-               print(coverage) 
-               var.append(coverage["A"])
-               var.append(coverage["C"])
-               var.append(coverage["G"])
-               var.append(coverage["T"])
+               print(coverage)
+               var.append(coverage)
+               #var.append(coverage["A"])
+               #var.append(coverage["C"])
+               #var.append(coverage["G"])
+               #var.append(coverage["T"])
                varlist.append(var)
 
             line = fp.readline()
@@ -196,6 +235,7 @@ with open('codon_results.tsv', 'a') as cdr_file:
         cdr.writerow(cd_list)
 
 data = read_vcf("snpeff_sample.ann.vcf")
+
 get_all_possible_codon(data)
 exit(data)
 if os.path.exists("variant_info.tsv"):
