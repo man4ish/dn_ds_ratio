@@ -24,6 +24,34 @@ def get_all_possible_path():
          all_possible_path = json.load(appf)
     return all_possible_path
 
+def get_all_possible_combination(n):
+    return n*(n-1)/2
+
+def get_coverage_product(num_A, num_C, num_G, num_T):
+    num_AC = num_A*num_C
+    num_AG = num_A*num_G
+    num_AT = num_A*num_T
+    num_CG = num_C*num_G
+    num_CT = num_C*num_T
+    num_GT = num_G*num_T
+    coverage_list = [num_AC, num_AG, num_AT, num_CG, num_CT, num_GT]
+    return coverage_list
+
+def get_all_possible_codon(codon_list):
+    '''get all possible codon with given allele'''
+    '''use multimap for storing gene-cds-start_pos as key and corresponding value'''
+    cdn_dict = {}
+    for cdn_lst in codon_list:
+        key = str(cdn_lst[0]) + "-" + str(cdn_lst[6]) + "-" + cdn_lst[7]
+        if not key in cdn_dict:
+
+           cdn_dict[key] = []
+           cdn_dict[key].append([cdn_lst[5], cdn_lst[2]])
+        else:
+            cdn_dict[key].append([cdn_lst[5], cdn_lst[2]])
+    return cdn_dict
+
+
 def get_triplets(seq, gene_id):
     '''generate triplets from ref seq'''
     codon_list = []
@@ -120,10 +148,14 @@ def read_vcf(vcf_file):
                    print(pos_in_codon)
                var.append(pos_in_codon)  # get from snpeff results
                mod = int(pos_in_codon) % 3
+               if(mod == 0):
+                   mod = 3
                codon_start = (int(pos_in_codon) // 3) * 3 + 1
                print("codon_start=" + str(codon_start))
                print(seq)
                codon = seq[codon_start-1:codon_start + 2]
+               var.append(mod)
+               var.append(codon_start)
                var.append(codon)      #get from snpeff results
 
 
@@ -164,6 +196,8 @@ with open('codon_results.tsv', 'a') as cdr_file:
         cdr.writerow(cd_list)
 
 data = read_vcf("snpeff_sample.ann.vcf")
+get_all_possible_codon(data)
+exit(data)
 if os.path.exists("variant_info.tsv"):
   os.remove("variant_info.tsv")
 with open('variant_info.tsv', 'a') as myfile:
