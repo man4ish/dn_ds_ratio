@@ -8,23 +8,24 @@ import pandas as pd
 
 def get_codon():
     ''' readinfg codon json'''
-    with open('json_data/codon.txt') as cf:
+    with open('json_data/codon.json') as cf:
        codon_data = json.load(cf)
     return codon_data
 
 def getmutation_table():
     '''reading mutation codon'''
-    with open('json_data/mutation_codon.txt') as mcf:
+    with open('json_data/mutation_codon.json') as mcf:
        mutation_codon_data = json.load(mcf)
     return mutation_codon_data
 
 def get_all_possible_path():
     '''reading all possible path'''
-    with open('json_data/all_possible_path.txt') as appf:
+    with open('json_data/all_possible_path.json') as appf:
          all_possible_path = json.load(appf)
     return all_possible_path
 
 def get_triplets(seq, gene_id):
+    '''generate triplets from ref seq'''
     codon_list = []
     mutation_codon_data = getmutation_table()
     for i in range(int(len(seq)/3)):
@@ -54,6 +55,7 @@ def get_triplets(seq, gene_id):
     return codon_list
     
 def read_refseq(fasta_file):
+    'read fasta file'
     seq = ''
     with open(fasta_file) as fp:
         line = fp.readline()
@@ -65,10 +67,14 @@ def read_refseq(fasta_file):
     return(seq)
 
 def gen_codonlist(seq, start, stop, gene_id):
+    '''generate codon list for gene'''
+
     subseq = seq[start-1:stop]
     return get_triplets(subseq, gene_id)
     
-def get_gff_file(gff_file):
+def read_gff_file(gff_file):
+    '''read gtf file'''
+
     with open(gff_file) as fp:
         line = fp.readline()
         while line:
@@ -88,6 +94,8 @@ def filter_ann(ann_field):
         return False
 
 def read_vcf(vcf_file):
+    '''parse vcf file'''
+
     varlist = []
     #['Chr01', '8', '.', 'C', 'G', '65.28', 'FS_filter;SOR_filter', '', 'GT:DP:AD', '0/1:300:100,200']
     with open(vcf_file) as fp:
@@ -143,24 +151,26 @@ def read_vcf(vcf_file):
             line = fp.readline()
     return varlist      
 
-get_gff_file("sample.gtf")
+gff_file  = read_gff_file("sample.gtf")
 seq = read_refseq("sample.fa")
 
-'''
-data = read_vcf("snpeff_sample.ann.vcf")
-print(data)
 
+result_list = gen_codonlist(seq, 1, 18, "gene_id1_cds1")
+if os.path.exists("codon_results.tsv"):
+  os.remove("codon_results.tsv")
+with open('codon_results.tsv', 'a') as cdr_file:
+    cdr = csv.writer(cdr_file, delimiter='\t')
+    for cd_list in result_list:
+        cdr.writerow(cd_list)
+
+data = read_vcf("snpeff_sample.ann.vcf")
 if os.path.exists("variant_info.tsv"):
   os.remove("variant_info.tsv")
-
 with open('variant_info.tsv', 'a') as myfile:
     wr = csv.writer(myfile, delimiter='\t')
     for data_list in data:
         wr.writerow(data_list)
-'''
-print(gen_codonlist(seq, 1, 18, "gene_id1_cds1"))
 
-#codonlist = get_triplets(seq)
 
 
 '''
