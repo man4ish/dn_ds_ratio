@@ -24,15 +24,28 @@ def get_all_possible_path():
 def get_all_possible_combination(n):
     return n*(n-1)/2
 
-def get_coverage_product(num_A, num_C, num_G, num_T):
+def get_Ndiffs(coverage_dict):
+    num_A = int(coverage_dict['A'])
+    num_C = int(coverage_dict['C'])
+    num_G = int(coverage_dict['G'])
+    num_T = int(coverage_dict['T'])
+    DP = num_A + num_C + num_G + num_T
+
+
     num_AC = num_A*num_C
     num_AG = num_A*num_G
     num_AT = num_A*num_T
     num_CG = num_C*num_G
     num_CT = num_C*num_T
     num_GT = num_G*num_T
+
+    possible_combination = get_all_possible_combination(DP)
+
     coverage_list = [num_AC, num_AG, num_AT, num_CG, num_CT, num_GT]
-    return coverage_list
+    total_coverage_product = num_AC + num_AG + num_AT + num_CG + num_CT + num_GT
+    Ndiffs = total_coverage_product/possible_combination
+
+    return Ndiffs
 
 def get_allele_freq(pos, alleles):
     #print(alleles)
@@ -173,6 +186,7 @@ def possible_codon(key, alleles):
 def get_all_possible_codon(codon_list):
     '''get all possible codon with given allele'''
     #print(codon_list)
+
     cdn_dict = {}
     for cdn_lst in codon_list:
         key = str(cdn_lst[0]) + "-" + str(cdn_lst[6]) + "-" + cdn_lst[7]
@@ -205,7 +219,6 @@ def get_all_possible_codon(codon_list):
             # allele_frq_dict = {}
             # allele_frq_dict[pos_in_codon] = cdn_lst[9]
             # cdn_dict[key].append(allele_frq_dict)
-
     all_codon = possible_codon('Chr01-13-TTT', cdn_dict['Chr01-13-TTT'])
     exit(all_codon)
     #exit(cdn_dict['Chr01-13-TTT'][0][3][1]['alt']['allele'])
@@ -219,6 +232,12 @@ def get_all_possible_codon(codon_list):
 
     return cdn_dict
 
+def calculate_Ndiffs(codon_list):
+    for codon in codon_list:
+        coverage = codon[9]
+        print(coverage)
+        Ndiffs = get_Ndiffs(coverage)
+        print(Ndiffs)
 
 def get_triplets(seq, gene_id):
     '''generate triplets from ref seq'''
@@ -250,7 +269,7 @@ def get_triplets(seq, gene_id):
         codon_list.append(codon)
 
     return codon_list
-    
+
 def read_refseq(fasta_file):
     '''read fasta file'''
 
@@ -269,7 +288,7 @@ def gen_codonlist(seq, start, stop, gene_id):
 
     subseq = seq[start-1:stop]
     return get_triplets(subseq, gene_id)
-    
+
 def read_gff_file(gff_file):
     '''read gtf file'''
 
@@ -353,7 +372,7 @@ def read_vcf(vcf_file):
                var.append(coverage)
                varlist.append(var)
             line = fp.readline()
-    return varlist      
+    return varlist
 
 gff_file  = read_gff_file("sample.gtf")
 seq = read_refseq("sample.fa")
@@ -376,8 +395,8 @@ with open('variant_info.tsv', 'a') as myfile:
     for data_list in data:
         wr.writerow(data_list)
 
-get_all_possible_codon(data)
-
+#get_all_possible_codon(data)
+calculate_Ndiffs(data)
 
 
 '''
