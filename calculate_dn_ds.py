@@ -4,12 +4,6 @@ import csv
 import os
 
 class calculate_dNdS_Utils:
-    def get_codon(self):
-        ''' readinfg codon json'''
-
-        with open('json_data/codon.json') as cf:
-            codon_data = json.load(cf)
-        return codon_data
 
     def get_codon(self):
         ''' readinfg codon json'''
@@ -91,6 +85,47 @@ class calculate_dNdS_Utils:
         Ndiffs = total_coverage_product / possible_combination
 
         return Ndiffs
+
+    def get_Sites_ref(self, triplet):
+        '''Calculate Nsites_ref and Ssites_ref from mutation table'''
+
+        N = 0
+        S = 0
+        mutation_codon_data = self.getmutation_table()
+        N1 = mutation_codon_data[triplet + "_N_1"]
+        N2 = mutation_codon_data[triplet + "_N_2"]
+        N3 = mutation_codon_data[triplet + "_N_3"]
+        S1 = mutation_codon_data[triplet + "_S_1"]
+        S2 = mutation_codon_data[triplet + "_S_2"]
+        S3 = mutation_codon_data[triplet + "_S_3"]
+        N = N + (N1 + N2 + N3)
+        S = S + (S1 + S2 + S3)
+
+        return {"Nsites_ref": N, "Ssites_ref": S}
+
+    def get_Sites(self, all_codon):
+        '''
+        :param all_codon:
+        :return: Nsites and Ssites
+        '''
+
+        c = 0
+        Nsites = 0
+        Ssites = 0
+        for triplet in all_codon["codon"]:
+            print(triplet)
+            nt_freqs = all_codon["allele_prop"][c]
+            freq_product = nt_freqs[0] * nt_freqs[1] * nt_freqs[2]
+            # print(freq_product)
+            c = c + 1
+            Sites = self.get_Sites_ref(triplet)
+            Nsites_ref = Sites['Nsites_ref']
+            Ssites_ref = Sites['Ssites_ref']
+            Nsites = Nsites + freq_product * Nsites_ref
+            Ssites = Ssites + freq_product * Ssites_ref
+
+        #print(str(Nsites) + "\t" + str(Ssites))
+        return {"Nsites": Nsites, "Ssites": Ssites}
 
     def get_allele_freq(self, pos, alleles):
         ''' get allele frquency for given pos'''
@@ -188,47 +223,6 @@ class calculate_dNdS_Utils:
         possible_codon_dict = {"codon": possible_cdn_list, "allele_prop": possible_cdn_freq_list}
 
         return possible_codon_dict
-
-    def get_Sites_ref(self, triplet):
-        '''Calculate Nsites_ref and Ssites_ref from mutation table'''
-
-        N = 0
-        S = 0
-        mutation_codon_data = self.getmutation_table()
-        N1 = mutation_codon_data[triplet + "_N_1"]
-        N2 = mutation_codon_data[triplet + "_N_2"]
-        N3 = mutation_codon_data[triplet + "_N_3"]
-        S1 = mutation_codon_data[triplet + "_S_1"]
-        S2 = mutation_codon_data[triplet + "_S_2"]
-        S3 = mutation_codon_data[triplet + "_S_3"]
-        N = N + (N1 + N2 + N3)
-        S = S + (S1 + S2 + S3)
-
-        return {"Nsites_ref": N, "Ssites_ref": S}
-
-    def get_Sites(self, all_codon):
-        '''
-        :param all_codon:
-        :return: Nsites and Ssites
-        '''
-
-        c = 0
-        Nsites = 0
-        Ssites = 0
-        for triplet in all_codon["codon"]:
-            print(triplet)
-            nt_freqs = all_codon["allele_prop"][c]
-            freq_product = nt_freqs[0] * nt_freqs[1] * nt_freqs[2]
-            # print(freq_product)
-            c = c + 1
-            Sites = self.get_Sites_ref(triplet)
-            Nsites_ref = Sites['Nsites_ref']
-            Ssites_ref = Sites['Ssites_ref']
-            Nsites = Nsites + freq_product * Nsites_ref
-            Ssites = Ssites + freq_product * Ssites_ref
-
-        #print(str(Nsites) + "\t" + str(Ssites))
-        return {"Nsites": Nsites, "Ssites": Ssites}
 
     def get_all_possible_codon(self, codon_list):
         '''get all possible codon with given allele'''
