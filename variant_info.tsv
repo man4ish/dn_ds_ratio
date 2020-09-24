@@ -1,4 +1,4 @@
-Chr01	C	G	8	8	2	7	CCC	missense_variant	0	100	200	0
-Chr01	G	C	12	12	3	13	TTT	synonymous_variant	0	150	100	0
-Chr01	T	A	14	14	2	13	TTT	missense_variant	200	0	0	150
-Chr01	T	C	15	15	3	16	TAA	synonymous_variant	0	250	0	150
+Chr01	C	G	8	8	2	7	CCC	missense_variant	{'A': 0, 'C': '100', 'G': '200', 'T': 0}
+Chr01	G	C	12	12	3	10	GGG	synonymous_variant	{'A': 0, 'C': '200', 'G': '100', 'T': 0}
+Chr01	T	A	14	14	2	13	TTT	missense_variant	{'A': '200', 'C': 0, 'G': 0, 'T': '100'}
+Chr01	T	C	15	15	3	13	TTT	synonymous_variant	{'A': 0, 'C': '200', 'G': 0, 'T': '100'}

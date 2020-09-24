@@ -45,10 +45,10 @@ def get_allele_freq(pos, alleles):
            allele_prop = int(alt_frq) / (int(ref_frq) + int(alt_frq))
            ref_prop = int(ref_frq) /(int(ref_frq) + int(alt_frq))
            #print(ref_prop)
-           allele_dict = {"ref_freq": ref_prop, "allele_freq": allele_prop}
+           allele_dict = {"ref_freq": ref_prop, "alt_freq": allele_prop}
            return allele_dict
         else:
-           allele_dict = {"ref_freq": 1, "allele_freq": 0}
+           allele_dict = {"ref_freq": 1, "alt_freq": 0}
 
     return allele_dict
 
@@ -75,15 +75,15 @@ def possible_codon(key, alleles):
 
     freq = []
     possible_cdn_list = []
-
+    possible_cdn_freq_list = []
 
 
     nt_frq1 = get_allele_freq(1, alleles)
     nt_frq2 = get_allele_freq(2, alleles)
     nt_frq3 = get_allele_freq(3, alleles)
-    print(nt_frq1)
-    print(nt_frq2)
-    print(nt_frq3)
+    #print(nt_frq1)
+    #print(nt_frq2)
+    #print(nt_frq3)
 
 
     for i in range(len(codon[1])):
@@ -96,6 +96,47 @@ def possible_codon(key, alleles):
                 nt2 = codon[2][i]
                 nt3 = codon[3][i]
 
+
+                for allele in alleles:       #need to fix the logic
+                    if (pos1 in allele.keys()):
+                        ref1 = allele[pos1][0]['ref']['allele']
+                        alt1 = allele[pos1][1]['alt']['allele']
+                        if(codon[1][i] == ref1):
+                            nt1_prop = nt_frq1["ref_freq"]
+                        else:
+                            nt1_prop = nt_frq1["alt_freq"]
+                    else:
+                        nt1_prop = 1
+
+                    if (pos2 in allele.keys()):
+                        ref2 = allele[pos2][0]['ref']['allele']
+                        alt2 = allele[pos2][1]['alt']['allele']
+                        print(allele)
+                        if (codon[2][j] == ref2):
+                            print(codon[2][j] + "\t" + ref2)
+                            print(nt_frq2)
+                            nt2_prop = nt_frq2["ref_freq"]
+                            print(nt2_prop)
+                        else:
+                            nt2_prop = nt_frq2["alt_freq"]
+                            print(nt2_prop)
+                    else:
+                        nt2_prop = 1
+
+                    if (pos3 in allele.keys()):
+
+                        ref3 = allele[pos3][0]['ref']['allele']
+                        alt3 = allele[pos3][1]['alt']['allele']
+
+                        if (codon[3][k] == ref3):
+                            nt3_prop = nt_frq3["ref_freq"]
+                        else:
+                            nt3_prop = nt_frq3["alt_freq"]
+                    else:
+                        nt3_prop = 1
+                    print(nt3_prop)
+
+                possible_cdn_freq_list.append([nt1_prop, nt2_prop, nt3_prop])
                 possible_cdn_list.append(codon[1][i] + codon[2][j] + codon[3][k])
 
 
@@ -124,7 +165,7 @@ def possible_codon(key, alleles):
         #print("freq=" + str(nt_frq1) + "\t" + str(nt_frq2) + "\t" + str(nt_frq3))
      '''
 
-
+    print(possible_cdn_freq_list)
 
     return possible_cdn_list
 
@@ -164,6 +205,7 @@ def get_all_possible_codon(codon_list):
             # allele_frq_dict = {}
             # allele_frq_dict[pos_in_codon] = cdn_lst[9]
             # cdn_dict[key].append(allele_frq_dict)
+
     all_codon = possible_codon('Chr01-13-TTT', cdn_dict['Chr01-13-TTT'])
     exit(all_codon)
     #exit(cdn_dict['Chr01-13-TTT'][0][3][1]['alt']['allele'])
@@ -276,12 +318,18 @@ def read_vcf(vcf_file):
                    print(pos_in_codon)
                var.append(pos_in_codon)  # get from snpeff results
                mod = int(pos_in_codon) % 3
+               quotient = int(pos_in_codon)//3
                if(mod == 0):
-                   mod = 3
-               codon_start = (int(pos_in_codon) // 3) * 3 + 1
+                   quotient = quotient - 1
+                   print("remainder=" + pos_in_codon + "\t" + str(quotient))
+                   codon_start = quotient*3 + 1
+               else :
+                   codon_start = quotient*3 + 1
                print("codon_start=" + str(codon_start))
                print(seq)
                codon = seq[codon_start-1:codon_start + 2]
+               if(mod == 0):
+                   mod = 3
                var.append(mod)
                var.append(codon_start)
                var.append(codon)      #get from snpeff results
@@ -303,12 +351,7 @@ def read_vcf(vcf_file):
                coverage[rec[4]] = (sample[AD_index]).split(",")[1]  #for single allele
                print(coverage)
                var.append(coverage)
-               #var.append(coverage["A"])
-               #var.append(coverage["C"])
-               #var.append(coverage["G"])
-               #var.append(coverage["T"])
                varlist.append(var)
-
             line = fp.readline()
     return varlist      
 
@@ -326,14 +369,14 @@ with open('codon_results.tsv', 'a') as cdr_file:
 
 data = read_vcf("snpeff_sample.ann.vcf")
 
-get_all_possible_codon(data)
-exit(data)
 if os.path.exists("variant_info.tsv"):
   os.remove("variant_info.tsv")
 with open('variant_info.tsv', 'a') as myfile:
     wr = csv.writer(myfile, delimiter='\t')
     for data_list in data:
         wr.writerow(data_list)
+
+get_all_possible_codon(data)
 
 
 
