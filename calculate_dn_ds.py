@@ -5,32 +5,63 @@ import os
 
 def get_codon():
     ''' readinfg codon json'''
+
     with open('json_data/codon.json') as cf:
        codon_data = json.load(cf)
     return codon_data
 
 def getmutation_table():
     '''reading mutation codon'''
+
     with open('json_data/mutation_codon.json') as mcf:
        mutation_codon_data = json.load(mcf)
     return mutation_codon_data
 
 def get_all_possible_path():
     '''reading all possible path'''
+
     with open('json_data/all_possible_path.json') as appf:
          all_possible_path = json.load(appf)
     return all_possible_path
 
+
+def calculate_dn_ds_ratio(Sites, Sites_ref):
+    '''
+    :param Sites: list with Nsites and Ssites values for all codon
+    :param Sites_ref: list with Nsites_ref and Ssites_ref values for all codon
+    :return: ration of dn and ds
+    '''
+
+    total_Ndiffs = 0
+    total_Sdiffs = 0
+    total_Nsites = 0
+    total_Ssites = 0
+
+    for i in range(len(Sites)):
+        total_Ndiffs  = Sites_ref["Nsites_ref"]
+        total_Sdiffs =  Sites_ref["Nsites_ref"]
+        total_Nsites = Sites["Nsites"]
+        total_Ssites = Sites["Ssites"]
+
+    pn = total_Ndiffs/total_Nsites
+    ps = total_Sdiffs/total_Ssites
+
+    dn_ds_ratio = pn/ps
+
+    return dn_ds_ratio
+
+
 def get_all_possible_combination(n):
+    ''' get all possible combination formula = nc2'''
     return n*(n-1)/2
 
 def get_Ndiffs(coverage_dict):
+    ''' calculate Ndiffs '''
     num_A = int(coverage_dict['A'])
     num_C = int(coverage_dict['C'])
     num_G = int(coverage_dict['G'])
     num_T = int(coverage_dict['T'])
     DP = num_A + num_C + num_G + num_T
-
 
     num_AC = num_A*num_C
     num_AG = num_A*num_G
@@ -40,7 +71,6 @@ def get_Ndiffs(coverage_dict):
     num_GT = num_G*num_T
 
     possible_combination = get_all_possible_combination(DP)
-
     coverage_list = [num_AC, num_AG, num_AT, num_CG, num_CT, num_GT]
     total_coverage_product = num_AC + num_AG + num_AT + num_CG + num_CT + num_GT
     Ndiffs = total_coverage_product/possible_combination
@@ -48,8 +78,7 @@ def get_Ndiffs(coverage_dict):
     return Ndiffs
 
 def get_allele_freq(pos, alleles):
-    #print(alleles)
-    #print(pos)
+    ''' get allele frquency for given pos'''
     for allele in alleles:
         if pos in allele.keys():
            #print(allele)
@@ -78,15 +107,7 @@ def possible_codon(key, alleles):
     for allele in alleles:
         for pos in allele:
             codon[pos].append(allele[pos][1]['alt']['allele'])
-    '''
-    for allele in alleles:
-        for pos in allele:
-            alt_allele_list = allele[pos]
-            for alt_allele in alt_allele_list:
-                codon[pos].append(alt_allele)
-    '''
 
-    freq = []
     possible_cdn_list = []
     possible_cdn_freq_list = []
 
@@ -94,10 +115,10 @@ def possible_codon(key, alleles):
     nt_frq1 = get_allele_freq(1, alleles)
     nt_frq2 = get_allele_freq(2, alleles)
     nt_frq3 = get_allele_freq(3, alleles)
-    #print(nt_frq1)
-    #print(nt_frq2)
-    #print(nt_frq3)
 
+    nt_pos1 = False
+    nt_pos2 = False
+    nt_pos3 = False
 
     for i in range(len(codon[1])):
         for j in range(len(codon[2])):
@@ -106,81 +127,91 @@ def possible_codon(key, alleles):
                 pos2 = 2
                 pos3 = 3
                 nt1 = codon[1][i]
-                nt2 = codon[2][i]
-                nt3 = codon[3][i]
+                nt2 = codon[2][j]
+                nt3 = codon[3][k]
 
-
-                for allele in alleles:       #need to fix the logic
+                for allele in alleles:
                     if (pos1 in allele.keys()):
                         ref1 = allele[pos1][0]['ref']['allele']
-                        alt1 = allele[pos1][1]['alt']['allele']
-                        if(codon[1][i] == ref1):
-                            nt1_prop = nt_frq1["ref_freq"]
+
+                        if(nt1 == ref1):
+                            nt_prop1 = nt_frq1["ref_freq"]
                         else:
-                            nt1_prop = nt_frq1["alt_freq"]
-                    else:
-                        nt1_prop = 1
+                            nt_prop1 = nt_frq1["alt_freq"]
+                        nt_pos1 = True
 
                     if (pos2 in allele.keys()):
                         ref2 = allele[pos2][0]['ref']['allele']
-                        alt2 = allele[pos2][1]['alt']['allele']
-                        print(allele)
-                        if (codon[2][j] == ref2):
-                            print(codon[2][j] + "\t" + ref2)
-                            print(nt_frq2)
-                            nt2_prop = nt_frq2["ref_freq"]
-                            print(nt2_prop)
+
+                        if (nt2 == ref2):
+                            #print(codon[2][j] + "\t" + ref2)
+                            #print(nt_frq2)
+                            nt_prop2 = nt_frq2["ref_freq"]
+                            #print(nt_prop2)
                         else:
-                            nt2_prop = nt_frq2["alt_freq"]
-                            print(nt2_prop)
-                    else:
-                        nt2_prop = 1
+                            nt_prop2 = nt_frq2["alt_freq"]
+                            #print(nt_prop2)
+                        nt_pos2 = True
 
                     if (pos3 in allele.keys()):
-
                         ref3 = allele[pos3][0]['ref']['allele']
-                        alt3 = allele[pos3][1]['alt']['allele']
 
-                        if (codon[3][k] == ref3):
-                            nt3_prop = nt_frq3["ref_freq"]
+                        if (nt3 == ref3):
+                            nt_prop3 = nt_frq3["ref_freq"]
                         else:
-                            nt3_prop = nt_frq3["alt_freq"]
-                    else:
-                        nt3_prop = 1
-                    print(nt3_prop)
+                            nt_prop3 = nt_frq3["alt_freq"]
+                        nt_pos3 = True
 
-                possible_cdn_freq_list.append([nt1_prop, nt2_prop, nt3_prop])
-                possible_cdn_list.append(codon[1][i] + codon[2][j] + codon[3][k])
+                    if(not nt_pos1):
+                        nt_prop1 = 1
+                    if(not nt_pos2):
+                        nt_prop2 = 1
+                    if (not nt_pos3):
+                        nt_prop3 = 1
 
+                possible_cdn_freq_list.append([nt_prop1, nt_prop2, nt_prop3])
+                possible_cdn_list.append(nt1 + nt2 + nt3)
 
-    ''' calculating frequency at each position in codon'''
-    '''
-    for allele in alleles:
-        if 1 in allele:
-            alt_frq  = allele[1][1]['alt']['freq']
-            ref_freq = allele[1][0]['ref']['freq']
-            nt_frq1 = int (alt_frq)/(int(ref_freq) + int(alt_frq))
-        else:
-            nt_frq1 = 1
-        if 2 in allele:
-            alt_frq  = allele[2][1]['alt']['freq']
-            ref_freq = allele[2][0]['ref']['freq']
-            nt_frq2 = int (alt_frq)/(int(ref_freq) + int(alt_frq))
-        else:
-            nt_frq2 = 1
-        if 3 in allele:
-            alt_frq  = allele[3][1]['alt']['freq']
-            ref_freq = allele[3][0]['ref']['freq']
-            nt_frq3 = int (alt_frq)/(int(ref_freq) + int(alt_frq))
-        else:
-            nt_frq3 = 1
+    possible_codon_dict = {"codon" : possible_cdn_list, "allele_prop" : possible_cdn_freq_list}
 
-        #print("freq=" + str(nt_frq1) + "\t" + str(nt_frq2) + "\t" + str(nt_frq3))
-     '''
+    return possible_codon_dict
 
-    print(possible_cdn_freq_list)
+def get_Sites_ref(triplet):
+    '''Calculate Nsites_ref and Ssites_ref from mutation table'''
+    N = 0
+    S = 0
+    mutation_codon_data = getmutation_table()
+    N1 = mutation_codon_data[triplet + "_N_1"]
+    N2 = mutation_codon_data[triplet + "_N_2"]
+    N3 = mutation_codon_data[triplet + "_N_3"]
+    S1 = mutation_codon_data[triplet + "_S_1"]
+    S2 = mutation_codon_data[triplet + "_S_2"]
+    S3 = mutation_codon_data[triplet + "_S_3"]
+    N = N + (N1 + N2 + N3)
+    S = S + (S1 + S2 + S3)
 
-    return possible_cdn_list
+    return {"Nsites_ref" : N, "Ssites_ref" : S}
+
+def get_Sites(all_codon):
+    c = 0
+    Nsites = 0
+    Ssites = 0
+    for triplet in all_codon["codon"]:
+        print(triplet)
+        nt_freqs = all_codon["allele_prop"][c]
+        freq_product = nt_freqs[0] * nt_freqs[1] * nt_freqs[2]
+        # print(freq_product)
+        c = c + 1
+        Sites = get_Sites_ref(triplet)
+        Nsites_ref = Sites['Nsites_ref']
+        Ssites_ref = Sites['Ssites_ref']
+        Nsites = Nsites + freq_product * Nsites_ref
+        Ssites = Ssites + freq_product * Ssites_ref
+
+    print(str(Nsites) + "\t" + str(Ssites))
+
+    return {"Nsites": Nsites, "Ssites": Ssites}
+
 
 
 def get_all_possible_codon(codon_list):
@@ -220,16 +251,15 @@ def get_all_possible_codon(codon_list):
             # allele_frq_dict[pos_in_codon] = cdn_lst[9]
             # cdn_dict[key].append(allele_frq_dict)
     all_codon = possible_codon('Chr01-13-TTT', cdn_dict['Chr01-13-TTT'])
-    exit(all_codon)
-    #exit(cdn_dict['Chr01-13-TTT'][0][3][1]['alt']['allele'])
 
     for key in cdn_dict:
         all_codon = possible_codon(key, cdn_dict[key])
         print("****")
-        print(cdn_dict[key])
+        #print(cdn_dict[key])
+        get_Sites(all_codon)
         print(all_codon)
         print("****")
-
+    exit(1)
     return cdn_dict
 
 def calculate_Ndiffs(codon_list):
@@ -268,6 +298,7 @@ def get_triplets(seq, gene_id):
         codon.append(S)
         codon_list.append(codon)
 
+    #exit(codon_list)
     return codon_list
 
 def read_refseq(fasta_file):
@@ -353,9 +384,7 @@ def read_vcf(vcf_file):
                var.append(codon_start)
                var.append(codon)      #get from snpeff results
 
-
                var_class = annotation.split("|")[1]
-
 
                var.append(var_class)            #get from snpeff results
                format = (rec[8]).split(":")
@@ -399,12 +428,3 @@ with open('variant_info.tsv', 'a') as myfile:
 calculate_Ndiffs(data)
 
 
-'''
-Calculating Nd and Sd for input vcf file
-with open("input.vcf") as fvp:
-    vcfline = fvp.readline()
-    while vcfline:
-       if not vcfline.startswith("#"):
-          vcfline = vcfline.strip()
-       fine = fvp.readline()
-'''
