@@ -38,10 +38,10 @@ class calculate_dNdS_Utils:
         total_Ssites = 0
 
         for cdn in codon_list:
-            total_Nsites = total_Nsites + cdn[0]
-            total_Ssites = total_Ssites + cdn[1]
-            total_Ndiffs = total_Ndiffs + cdn[2]
-            total_Sdiffs = total_Sdiffs + cdn[3]
+            total_Nsites = total_Nsites + float(cdn[0])
+            total_Ssites = total_Ssites + float(cdn[1])
+            total_Ndiffs = total_Ndiffs + float(cdn[2])
+            total_Sdiffs = total_Sdiffs + float(cdn[3])
 
         pn = total_Ndiffs / total_Nsites
         ps = total_Sdiffs / total_Ssites
@@ -399,12 +399,13 @@ class calculate_dNdS_Utils:
 
 if __name__ == "__main__":
     cu = calculate_dNdS_Utils()
-    gff_file = cu.read_gff_file("sample.gtf")
-    seq = cu.read_refseq("sample.fa")
 
+    gff_file = cu.read_gff_file("sample.gtf")  #read gff file
+    seq = cu.read_refseq("sample.fa")  # read fasta file
+    data = cu.read_vcf("snpeff_sample.ann.vcf")  #read vcf file
+
+    '''write mutation table'''
     data_dict = {}
-
-    data = cu.read_vcf("snpeff_sample.ann.vcf")
     if os.path.exists("variant_info.tsv"):
         os.remove("variant_info.tsv")
     with open('variant_info.tsv', 'a') as myfile:
@@ -419,17 +420,24 @@ if __name__ == "__main__":
             wr.writerow(data_list)
 
     all_possible_codon = cu.get_all_possible_codon(data)
-    #print(all_possible_codon)
 
+    '''write codon table'''
     result_list = cu.gen_codonlist(seq, 1, 18, "Chr01")
+    if os.path.exists("codon_results_temp.tsv"):
+        os.remove("codon_results_temp.tsv")
+    with open('codon_results_temp.tsv', 'a') as cdr_tmp_file:
+        cdr_temp = csv.writer(cdr_tmp_file, delimiter='\t')
+        for cd_temp_list in result_list:
+            cdr_temp.writerow(cd_temp_list)
 
-    if os.path.exists("codon_results.tsv"):
-        os.remove("codon_results.tsv")
-    with open('codon_results.tsv', 'a') as cdr_file:
-        cdr = csv.writer(cdr_file, delimiter='\t')
+    ''' read codon table and mutation table and generate statistics'''
+    with open('codon_results_temp.tsv', 'r') as cdr_file:
         pn_ps_lst = []
-        for cd_list in result_list:
-            key = cd_list[0] + '-' + str(cd_list[2]) + '-' + cd_list[1]
+        for line in cdr_file:
+            line  = line.rstrip()
+            cd_list = line.split("\t")
+
+            key = cd_list[0] + '-' + cd_list[2] + '-' + cd_list[1]
 
             if (key in all_possible_codon.keys()):
                 all_codon = cu.possible_codon(key, all_possible_codon[key])
@@ -438,13 +446,13 @@ if __name__ == "__main__":
                 Sites = cu.get_Sites(all_codon)
                 Nsites = Sites['Nsites']
                 Ssites = Sites['Ssites']
+
                 Ndiffs = 0
                 Sdiffs = 0
                 ###### Calculate Ndiffs and Sdiffs #####
                 if (key in data_dict.keys()):
-                    variants = data_dict[key]
-                    print(variants)
 
+                    variants = data_dict[key]
                     for var in variants:
 
                         mutation_type = var[0]
@@ -469,8 +477,6 @@ if __name__ == "__main__":
                 cd_list.append(0)
                 cd_list.append(0)
                 pn_ps_lst.append([Nsites, Ssites, 0, 0])
-
-            cdr.writerow(cd_list)
 
         dn_ds_ratio = cu.calculate_dn_ds_ratio(pn_ps_lst)
         print("dn/ds ratio = " + str(dn_ds_ratio))  # need to check with spreasheet
