@@ -409,6 +409,7 @@ if __name__ == "__main__":
     seq = cu.read_refseq("sample.fa")
 
     data_dict = {}
+
     data = cu.read_vcf("snpeff_sample.ann.vcf")
     if os.path.exists("variant_info.tsv"):
         os.remove("variant_info.tsv")
@@ -424,7 +425,7 @@ if __name__ == "__main__":
             wr.writerow(data_list)
 
     all_possible_codon = cu.get_all_possible_codon(data)
-    print(all_possible_codon)
+    #print(all_possible_codon)
 
     result_list = cu.gen_codonlist(seq, 1, 18, "Chr01")
 
