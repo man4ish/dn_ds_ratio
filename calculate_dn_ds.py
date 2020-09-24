@@ -25,11 +25,10 @@ def get_all_possible_path():
     return all_possible_path
 
 
-def calculate_dn_ds_ratio(Sites, Sites_ref):
+def calculate_dn_ds_ratio(codon_list):
     '''
-    :param Sites: list with Nsites and Ssites values for all codon
-    :param Sites_ref: list with Nsites_ref and Ssites_ref values for all codon
-    :return: ration of dn and ds
+    :param codon_list: list of codons with Ndiffs, Sdiffs, Nsites and Ssites values
+    :return: ratio of dn and ds
     '''
 
     total_Ndiffs = 0
@@ -37,14 +36,21 @@ def calculate_dn_ds_ratio(Sites, Sites_ref):
     total_Nsites = 0
     total_Ssites = 0
 
-    for i in range(len(Sites)):
-        total_Ndiffs  = Sites_ref["Nsites_ref"]
-        total_Sdiffs =  Sites_ref["Nsites_ref"]
-        total_Nsites = Sites["Nsites"]
-        total_Ssites = Sites["Ssites"]
+    for cdn in codon_list:
+        total_Nsites = total_Nsites + cdn[0]
+        total_Ssites = total_Ssites + cdn[1]
+        total_Ndiffs = total_Ndiffs + cdn[2]
+        total_Sdiffs = total_Sdiffs + cdn[3]
 
     pn = total_Ndiffs/total_Nsites
     ps = total_Sdiffs/total_Ssites
+
+    print("Ndiiffs = " + str(total_Ndiffs))
+    print("Sdiiffs = " + str(total_Sdiffs))
+    print("Nsites = " + str(total_Nsites))
+    print("Ssites = " + str(total_Ssites))
+    print("pn = " + str(pn))
+    print("ps = " + str(ps))
 
     dn_ds_ratio = pn/ps
 
@@ -56,7 +62,10 @@ def get_all_possible_combination(n):
     return n*(n-1)/2
 
 def get_Ndiffs(coverage_dict):
-    ''' calculate Ndiffs '''
+    '''
+    :param coverage_dict: dictionary of coverage
+    :return: Ndiffs or Sdiffs
+    '''
     num_A = int(coverage_dict['A'])
     num_C = int(coverage_dict['C'])
     num_G = int(coverage_dict['G'])
@@ -71,7 +80,7 @@ def get_Ndiffs(coverage_dict):
     num_GT = num_G*num_T
 
     possible_combination = get_all_possible_combination(DP)
-    coverage_list = [num_AC, num_AG, num_AT, num_CG, num_CT, num_GT]
+    #coverage_list = [num_AC, num_AG, num_AT, num_CG, num_CT, num_GT]
     total_coverage_product = num_AC + num_AG + num_AT + num_CG + num_CT + num_GT
     Ndiffs = total_coverage_product/possible_combination
 
@@ -209,10 +218,7 @@ def get_Sites(all_codon):
         Ssites = Ssites + freq_product * Ssites_ref
 
     print(str(Nsites) + "\t" + str(Ssites))
-
     return {"Nsites": Nsites, "Ssites": Ssites}
-
-
 
 def get_all_possible_codon(codon_list):
     '''get all possible codon with given allele'''
@@ -234,9 +240,6 @@ def get_all_possible_codon(codon_list):
            pos_dict[pos_in_codon] = allele_dict
            cdn_dict[key].append(pos_dict)
 
-           #allele_frq_dict = {}
-           #allele_frq_dict[pos_in_codon] = cdn_lst[9]
-           #cdn_dict[key].append(allele_frq_dict)
         else:
             pos_dict = {}
             pos_in_codon = cdn_lst[5]
@@ -247,39 +250,28 @@ def get_all_possible_codon(codon_list):
             pos_dict[pos_in_codon] = allele_dict
 
             cdn_dict[key].append(pos_dict)
-            # allele_frq_dict = {}
-            # allele_frq_dict[pos_in_codon] = cdn_lst[9]
-            # cdn_dict[key].append(allele_frq_dict)
-    all_codon = possible_codon('Chr01-13-TTT', cdn_dict['Chr01-13-TTT'])
 
     for key in cdn_dict:
         all_codon = possible_codon(key, cdn_dict[key])
         print("****")
-        #print(cdn_dict[key])
         get_Sites(all_codon)
         print(all_codon)
         print("****")
-    exit(1)
-    return cdn_dict
 
-def calculate_Ndiffs(codon_list):
-    for codon in codon_list:
-        coverage = codon[9]
-        print(coverage)
-        Ndiffs = get_Ndiffs(coverage)
-        print(Ndiffs)
+    return cdn_dict
 
 def get_triplets(seq, gene_id):
     '''generate triplets from ref seq'''
 
     codon_list = []
     mutation_codon_data = getmutation_table()
+
     for i in range(int(len(seq)/3)):
         codon = []
         start = 3*i
         end = 3*i+3
         codon.append(gene_id)
-        triplet =seq[start:end]
+        triplet = seq[start:end]
         N = 0
         S = 0
         N1 = mutation_codon_data[triplet + "_N_1"]
@@ -298,7 +290,6 @@ def get_triplets(seq, gene_id):
         codon.append(S)
         codon_list.append(codon)
 
-    #exit(codon_list)
     return codon_list
 
 def read_refseq(fasta_file):
@@ -392,8 +383,6 @@ def read_vcf(vcf_file):
                AD_index = format.index("AD")
                sample = (rec[9]).split(":")
 
-               #print(annotation.split("|"))
-
                print("DP=" + sample[DP_index] + "\tAD=" +sample[AD_index])
                coverage[rec[3]] = (sample[AD_index]).split(",")[0]
                coverage[rec[4]] = (sample[AD_index]).split(",")[1]  #for single allele
@@ -406,25 +395,75 @@ def read_vcf(vcf_file):
 gff_file  = read_gff_file("sample.gtf")
 seq = read_refseq("sample.fa")
 
-
-result_list = gen_codonlist(seq, 1, 18, "gene_id1_cds1")
-if os.path.exists("codon_results.tsv"):
-  os.remove("codon_results.tsv")
-with open('codon_results.tsv', 'a') as cdr_file:
-    cdr = csv.writer(cdr_file, delimiter='\t')
-    for cd_list in result_list:
-        cdr.writerow(cd_list)
-
+data_dict = {}
 data = read_vcf("snpeff_sample.ann.vcf")
-
 if os.path.exists("variant_info.tsv"):
   os.remove("variant_info.tsv")
 with open('variant_info.tsv', 'a') as myfile:
     wr = csv.writer(myfile, delimiter='\t')
     for data_list in data:
+        key = data_list[0] + '-' + str(data_list[6]) + '-' + data_list[7]
+        print(key)
+        if(key in data_dict.keys()):
+            data_dict[key].append([data_list[8], data_list[9]])
+        else:
+            data_dict[key] = [[data_list[8], data_list[9]]]
         wr.writerow(data_list)
 
-#get_all_possible_codon(data)
-calculate_Ndiffs(data)
+all_possible_codon = get_all_possible_codon(data)
+print(all_possible_codon)
+
+result_list = gen_codonlist(seq, 1, 18, "Chr01")
 
 
+if os.path.exists("codon_results.tsv"):
+  os.remove("codon_results.tsv")
+with open('codon_results.tsv', 'a') as cdr_file:
+    cdr = csv.writer(cdr_file, delimiter='\t')
+    pn_ps_lst = []
+    for cd_list in result_list:
+        key = cd_list[0] + '-' + str(cd_list[2]) + '-' +cd_list[1]
+
+        if(key in all_possible_codon.keys()):
+            all_codon = possible_codon(key, all_possible_codon[key])
+            print("****")
+            # print(cdn_dict[key])
+            Sites = get_Sites(all_codon)
+            Nsites = Sites['Nsites']
+            Ssites = Sites['Ssites']
+            Ndiffs = 0
+            Sdiffs = 0
+            ###### Calculate Ndiffs and Sdiffs #####
+            if(key in data_dict.keys()):
+                variants = data_dict[key]
+                print(variants)
+
+                for var in variants:
+                    
+                    mutation_type = var[0]
+                    coverage = var[1]
+                    if(mutation_type == "synonymous_variant"):
+                        Sdiffs = get_Ndiffs(coverage)
+                    else:
+                        Ndiffs = get_Ndiffs(coverage)
+                
+            print("Sdiifs " + str(Sdiffs) + "\t" + str(Ndiffs))
+
+            cd_list.append(Nsites)
+            cd_list.append(Ssites)
+            cd_list.append(Ndiffs)
+            cd_list.append(Sdiffs)
+            pn_ps_lst.append([Nsites, Ssites, Ndiffs, Sdiffs])
+        else:
+            Nsites = cd_list[5]
+            Ssites = cd_list[6]
+            cd_list.append(Nsites)
+            cd_list.append(Ssites)
+            cd_list.append(0)
+            cd_list.append(0)
+            pn_ps_lst.append([Nsites, Ssites, 0, 0])
+
+        cdr.writerow(cd_list)
+
+    dn_ds_ratio = calculate_dn_ds_ratio(pn_ps_lst)
+    print("dn/ds ratio = " + str(dn_ds_ratio))  #need to check with spreasheet
