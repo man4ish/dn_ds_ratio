@@ -37,23 +37,24 @@ class calculate_dNdS_Utils:
         total_Nsites = 0
         total_Ssites = 0
 
-        for cdn in codon_list:
-            total_Nsites = total_Nsites + float(cdn[0])
-            total_Ssites = total_Ssites + float(cdn[1])
-            total_Ndiffs = total_Ndiffs + float(cdn[2])
-            total_Sdiffs = total_Sdiffs + float(cdn[3])
+        with open("dnds_statistics.tsv", "w") as stat_file:
+            for cdn in codon_list:
+                total_Nsites = total_Nsites + float(cdn[0])
+                total_Ssites = total_Ssites + float(cdn[1])
+                total_Ndiffs = total_Ndiffs + float(cdn[2])
+                total_Sdiffs = total_Sdiffs + float(cdn[3])
 
-        pn = total_Ndiffs / total_Nsites
-        ps = total_Sdiffs / total_Ssites
+            pn = total_Ndiffs / total_Nsites
+            ps = total_Sdiffs / total_Ssites
+            dn_ds_ratio = pn / ps
 
-        print("Ndiiffs = " + str(total_Ndiffs))
-        print("Sdiiffs = " + str(total_Sdiffs))
-        print("Nsites = " + str(total_Nsites))
-        print("Ssites = " + str(total_Ssites))
-        print("pn = " + str(pn))
-        print("ps = " + str(ps))
-
-        dn_ds_ratio = pn / ps
+            stat_file.write("Ndiiffs:\t" + str(total_Ndiffs) + "\n")
+            stat_file.write("Sdiiffs:\t" + str(total_Sdiffs)+ "\n")
+            stat_file.write("Nsites:\t" + str(total_Nsites)+ "\n")
+            stat_file.write("Ssites:\t" + str(total_Ssites)+ "\n")
+            stat_file.write("pn:\t" + str(pn)+ "\n")
+            stat_file.write("ps:\t" + str(ps)+ "\n")
+            stat_file.write("dn/ds:\t" + str(dn_ds_ratio)+ "\n")
 
         return dn_ds_ratio
 
@@ -80,7 +81,6 @@ class calculate_dNdS_Utils:
         num_GT = num_G * num_T
 
         possible_combination = self.get_all_possible_combination(DP)
-        # coverage_list = [num_AC, num_AG, num_AT, num_CG, num_CT, num_GT]
         total_coverage_product = num_AC + num_AG + num_AT + num_CG + num_CT + num_GT
         Ndiffs = total_coverage_product / possible_combination
 
@@ -113,10 +113,8 @@ class calculate_dNdS_Utils:
         Nsites = 0
         Ssites = 0
         for triplet in all_codon["codon"]:
-            print(triplet)
             nt_freqs = all_codon["allele_prop"][c]
             freq_product = nt_freqs[0] * nt_freqs[1] * nt_freqs[2]
-            # print(freq_product)
             c = c + 1
             Sites = self.get_Sites_ref(triplet)
             Nsites_ref = Sites['Nsites_ref']
@@ -124,19 +122,16 @@ class calculate_dNdS_Utils:
             Nsites = Nsites + freq_product * Nsites_ref
             Ssites = Ssites + freq_product * Ssites_ref
 
-        #print(str(Nsites) + "\t" + str(Ssites))
         return {"Nsites": Nsites, "Ssites": Ssites}
 
     def get_allele_freq(self, pos, alleles):
         ''' get allele frquency for given pos'''
         for allele in alleles:
             if pos in allele.keys():
-                # print(allele)
                 alt_frq = allele[pos][1]['alt']['freq']
                 ref_frq = allele[pos][0]['ref']['freq']
                 allele_prop = int(alt_frq) / (int(ref_frq) + int(alt_frq))
                 ref_prop = int(ref_frq) / (int(ref_frq) + int(alt_frq))
-                # print(ref_prop)
                 allele_dict = {"ref_freq": ref_prop, "alt_freq": allele_prop}
                 return allele_dict
             else:
@@ -174,6 +169,7 @@ class calculate_dNdS_Utils:
                     pos1 = 1
                     pos2 = 2
                     pos3 = 3
+
                     nt1 = codon[1][i]
                     nt2 = codon[2][j]
                     nt3 = codon[3][k]
@@ -192,13 +188,9 @@ class calculate_dNdS_Utils:
                             ref2 = allele[pos2][0]['ref']['allele']
 
                             if (nt2 == ref2):
-                                # print(codon[2][j] + "\t" + ref2)
-                                # print(nt_frq2)
                                 nt_prop2 = nt_frq2["ref_freq"]
-                                # print(nt_prop2)
                             else:
                                 nt_prop2 = nt_frq2["alt_freq"]
-                                # print(nt_prop2)
                             nt_pos2 = True
 
                         if (pos3 in allele.keys()):
@@ -258,10 +250,7 @@ class calculate_dNdS_Utils:
 
         for key in cdn_dict:
             all_codon = self.possible_codon(key, cdn_dict[key])
-            print("****")
             self.get_Sites(all_codon)
-            print(all_codon)
-            print("****")
 
         return cdn_dict
 
@@ -341,7 +330,6 @@ class calculate_dNdS_Utils:
         '''parse vcf file'''
 
         varlist = []
-        # ['Chr01', '8', '.', 'C', 'G', '65.28', 'FS_filter;SOR_filter', '', 'GT:DP:AD', '0/1:300:100,200']
         with open(vcf_file) as fp:
             line = fp.readline()
             while line:
@@ -355,24 +343,19 @@ class calculate_dNdS_Utils:
                     var.append(rec[4])
                     var.append(rec[1])
                     annotation = rec[7]
-                    print(annotation.split("|"))
                     var_field = filter(self.filter_ann, annotation.split("|"))
                     seq = self.read_refseq("sample.fa")
                     pos_in_codon = 0
                     for variation in var_field:
                         pos_in_codon = variation[2:(variation.find('>') - 1)]
-                        print(pos_in_codon)
                     var.append(pos_in_codon)  # get from snpeff results
                     mod = int(pos_in_codon) % 3
                     quotient = int(pos_in_codon) // 3
                     if (mod == 0):
                         quotient = quotient - 1
-                        print("remainder=" + pos_in_codon + "\t" + str(quotient))
                         codon_start = quotient * 3 + 1
                     else:
                         codon_start = quotient * 3 + 1
-                    print("codon_start=" + str(codon_start))
-                    print(seq)
                     codon = seq[codon_start - 1:codon_start + 2]
                     if (mod == 0):
                         mod = 3
@@ -388,14 +371,69 @@ class calculate_dNdS_Utils:
                     AD_index = format.index("AD")
                     sample = (rec[9]).split(":")
 
-                    print("DP=" + sample[DP_index] + "\tAD=" + sample[AD_index])
                     coverage[rec[3]] = (sample[AD_index]).split(",")[0]
                     coverage[rec[4]] = (sample[AD_index]).split(",")[1]  # for single allele
-                    print(coverage)
                     var.append(coverage)
                     varlist.append(var)
                 line = fp.readline()
         return varlist
+
+    def generate_statistics(self, varinat_info_file, codon_info_file, all_possible_codon):
+        '''
+        :param varinat_info_file:
+        :param codon_info_file:
+        :param all_possible_codon:
+        :return:
+        '''
+
+        '''read data from variant_info.tsv file'''
+        with open(varinat_info_file) as variantfle:
+            for var_line in variantfle:
+                var_line = var_line.rstrip()
+                data_list = var_line.split("\t")
+                for data_list in data:
+                    key = data_list[0] + '-' + str(data_list[6]) + '-' + data_list[7]
+                    if (key in data_dict.keys()):
+                        data_dict[key].append([data_list[8], data_list[9]])
+                    else:
+                        data_dict[key] = [[data_list[8], data_list[9]]]
+
+        '''read codon table and generate statistics'''
+        with open(codon_info_file, 'r') as cdr_file:
+            pn_ps_lst = []
+            for line in cdr_file:
+                line = line.rstrip()
+                cd_list = line.split("\t")
+                key = cd_list[0] + '-' + cd_list[2] + '-' + cd_list[1]
+
+                if (key in all_possible_codon.keys()):
+                    all_codon = cu.possible_codon(key, all_possible_codon[key])
+                    Sites = cu.get_Sites(all_codon)
+                    Nsites = Sites['Nsites']
+                    Ssites = Sites['Ssites']
+
+                    Ndiffs = 0
+                    Sdiffs = 0
+                    ###### Calculate Ndiffs and Sdiffs #####
+                    if (key in data_dict.keys()):
+                        variants = data_dict[key]
+                        for var in variants:
+
+                            mutation_type = var[0]
+                            coverage = var[1]
+                            if (mutation_type == "synonymous_variant"):
+                                Sdiffs = cu.get_Ndiffs(coverage)
+                            else:
+                                Ndiffs = cu.get_Ndiffs(coverage)
+
+                    pn_ps_lst.append([Nsites, Ssites, Ndiffs, Sdiffs])
+                else:
+                    Nsites = cd_list[5]
+                    Ssites = cd_list[6]
+                    pn_ps_lst.append([Nsites, Ssites, 0, 0])
+
+            dn_ds_ratio = self.calculate_dn_ds_ratio(pn_ps_lst)
+            print("dn/ds ratio = " + str(dn_ds_ratio))  # need to check with spreasheet
 
 if __name__ == "__main__":
     cu = calculate_dNdS_Utils()
@@ -411,18 +449,10 @@ if __name__ == "__main__":
     with open('variant_info.tsv', 'a') as myfile:
         wr = csv.writer(myfile, delimiter='\t')
         for data_list in data:
-            key = data_list[0] + '-' + str(data_list[6]) + '-' + data_list[7]
-            print(key)
-            if (key in data_dict.keys()):
-                data_dict[key].append([data_list[8], data_list[9]])
-            else:
-                data_dict[key] = [[data_list[8], data_list[9]]]
             wr.writerow(data_list)
 
-    all_possible_codon = cu.get_all_possible_codon(data)
-
     '''write codon table'''
-    result_list = cu.gen_codonlist(seq, 1, 18, "Chr01")
+    result_list = cu.gen_codonlist(seq, 1, 18, "Chr01")   #Chr01 hardcoded for testitng
     if os.path.exists("codon_results_temp.tsv"):
         os.remove("codon_results_temp.tsv")
     with open('codon_results_temp.tsv', 'a') as cdr_tmp_file:
@@ -430,54 +460,8 @@ if __name__ == "__main__":
         for cd_temp_list in result_list:
             cdr_temp.writerow(cd_temp_list)
 
-    ''' read codon table and mutation table and generate statistics'''
-    with open('codon_results_temp.tsv', 'r') as cdr_file:
-        pn_ps_lst = []
-        for line in cdr_file:
-            line  = line.rstrip()
-            cd_list = line.split("\t")
+    all_possible_codon = cu.get_all_possible_codon(data)  #generating all possible codon
+    cu.generate_statistics("variant_info.tsv", "codon_results_temp.tsv", all_possible_codon)
 
-            key = cd_list[0] + '-' + cd_list[2] + '-' + cd_list[1]
 
-            if (key in all_possible_codon.keys()):
-                all_codon = cu.possible_codon(key, all_possible_codon[key])
-                print("****")
-                # print(cdn_dict[key])
-                Sites = cu.get_Sites(all_codon)
-                Nsites = Sites['Nsites']
-                Ssites = Sites['Ssites']
-
-                Ndiffs = 0
-                Sdiffs = 0
-                ###### Calculate Ndiffs and Sdiffs #####
-                if (key in data_dict.keys()):
-
-                    variants = data_dict[key]
-                    for var in variants:
-
-                        mutation_type = var[0]
-                        coverage = var[1]
-                        if (mutation_type == "synonymous_variant"):
-                            Sdiffs = cu.get_Ndiffs(coverage)
-                        else:
-                            Ndiffs = cu.get_Ndiffs(coverage)
-
-                print("Sdiifs " + str(Sdiffs) + "\t" + str(Ndiffs))
-
-                cd_list.append(Nsites)
-                cd_list.append(Ssites)
-                cd_list.append(Ndiffs)
-                cd_list.append(Sdiffs)
-                pn_ps_lst.append([Nsites, Ssites, Ndiffs, Sdiffs])
-            else:
-                Nsites = cd_list[5]
-                Ssites = cd_list[6]
-                cd_list.append(Nsites)
-                cd_list.append(Ssites)
-                cd_list.append(0)
-                cd_list.append(0)
-                pn_ps_lst.append([Nsites, Ssites, 0, 0])
-
-        dn_ds_ratio = cu.calculate_dn_ds_ratio(pn_ps_lst)
-        print("dn/ds ratio = " + str(dn_ds_ratio))  # need to check with spreasheet
 
