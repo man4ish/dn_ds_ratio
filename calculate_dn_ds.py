@@ -254,7 +254,7 @@ class calculate_dNdS_Utils:
 
         return cdn_dict
 
-    def get_triplets(self, seq, gene_id):
+    def get_triplets(self, seq, cds_start, cds_end, gene_id):
         '''generate triplets from ref seq'''
 
         codon_list = []
@@ -277,13 +277,12 @@ class calculate_dNdS_Utils:
             N = N + (N1 + N2 + N3)
             S = S + (S1 + S2 + S3)
             codon.append(seq[start:end])
-            codon.append(start + 1)
-            codon.append(end)
-            codon.append(str(3 * i + 1) + ", " + str(3 * i + 2) + ", " + str(3 * i + 3))
+            codon.append((cds_start -1) + start +1)
+            codon.append((cds_start - 1) + end)
+            codon.append(str((cds_start -1) + 3 * i + 1) + ", " + str((cds_start -1) + 3 * i + 2) + ", " + str((cds_start -1) +3 * i + 3))
             codon.append(N)
             codon.append(S)
             codon_list.append(codon)
-
         return codon_list
 
     def read_refseq(self, fasta_file):
@@ -303,22 +302,29 @@ class calculate_dNdS_Utils:
         '''generate codon list for gene'''
 
         subseq = seq[start - 1:stop]
-        return self.get_triplets(subseq, gene_id)
+
+        print(str(start) +"\t" + str(stop) + "\t" + subseq )
+        return self.get_triplets(subseq, start, stop, gene_id)
 
     def read_gff_file(self, gff_file):
         '''read gtf file'''
-
+        gene_dict = {}
         with open(gff_file) as fp:
             line = fp.readline()
             while line:
                 if not line.startswith("#"):
                     line = line.strip()
                     rec = line.split("\t")
+                    chr = rec[0]
                     cds_start = rec[3]
                     cds_end = rec[4]
                     id = rec[8]
-                gene_id = id.split("\"")[1]
+                    gene_id = id.split("\"")[1]
+                    gene_dict[gene_id] = [chr, cds_start, cds_end]
                 line = fp.readline()
+
+        return gene_dict
+
 
     def filter_ann(self, ann_field):
         if '>' in ann_field:
@@ -438,7 +444,7 @@ class calculate_dNdS_Utils:
 if __name__ == "__main__":
     cu = calculate_dNdS_Utils()
 
-    gff_file = cu.read_gff_file("sample.gtf")  #read gff file
+    gene_dict = cu.read_gff_file("gene.gtf")  #read gff file
     seq = cu.read_refseq("sample.fa")  # read fasta file
     data = cu.read_vcf("snpeff_sample.ann.vcf")  #read vcf file
 
@@ -451,13 +457,21 @@ if __name__ == "__main__":
         for data_list in data:
             wr.writerow(data_list)
 
+
     '''write codon table'''
-    result_list = cu.gen_codonlist(seq, 1, 18, "Chr01")   #Chr01 hardcoded for testitng
+    result_list = []             #for handling multi gene
+    for gene in gene_dict.keys():
+        chrom = gene_dict[gene][0]
+        cdn_start = int(gene_dict[gene][1])
+        cdn_end = int(gene_dict[gene][2])
+        cds_list = cu.gen_codonlist(seq, cdn_start, cdn_end, chrom)
+        result_list.append(cds_list)
+
     if os.path.exists("codon_results_temp.tsv"):
         os.remove("codon_results_temp.tsv")
     with open('codon_results_temp.tsv', 'a') as cdr_tmp_file:
         cdr_temp = csv.writer(cdr_tmp_file, delimiter='\t')
-        for cd_temp_list in result_list:
+        for cd_temp_list in cds_list:
             cdr_temp.writerow(cd_temp_list)
 
     all_possible_codon = cu.get_all_possible_codon(data)  #generating all possible codon

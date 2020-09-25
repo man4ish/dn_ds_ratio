@@ -1,0 +1,11 @@
+##fileformat=VCFv4.2
+##SnpEffVersion="5.0 (build 2020-08-09 21:23), by Pablo Cingolani"
+##SnpEffCmd="SnpEff  kbase_v1 ../sample.vcf "
+##INFO=<ID=ANN,Number=.,Type=String,Description="Functional annotations: 'Allele | Annotation | Annotation_Impact | Gene_Name | Gene_ID | Feature_Type | Feature_ID | Transcript_BioType | Rank | HGVS.c | HGVS.p | cDNA.pos / cDNA.length | CDS.pos / CDS.length | AA.pos / AA.length | Distance | ERRORS / WARNINGS / INFO' ">
+##INFO=<ID=LOF,Number=.,Type=String,Description="Predicted loss of function effects for this variant. Format: 'Gene_Name | Gene_ID | Number_of_transcripts_in_gene | Percent_of_transcripts_affected'">
+##INFO=<ID=NMD,Number=.,Type=String,Description="Predicted nonsense mediated decay effects for this variant. Format: 'Gene_Name | Gene_ID | Number_of_transcripts_in_gene | Percent_of_transcripts_affected'">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	BESC-100
+Chr01	8	.	C	G	65.28	FS_filter;SOR_filter		GT:DP:AD	0/1:300:100,200
+Chr01	12	.	G	C	65.28	FS_filter;SOR_filter		GT:DP:AD	0/1:300:100,200
+Chr01	14	.	T	A	65.28	FS_filter;SOR_filter		GT:DP:AD	0/1:300:100,200
+Chr01	15	.	T	C	65.28	FS_filter;SOR_filter		GT:DP:AD	0/1:300:100,200
