@@ -1,3 +1,4 @@
 ##gff-version 3.1.26
 Chr01	KBase	gene	1	21	.	+	0	ID=gene00001;Name=gene00001
-Chr01	KBase	CDS	1	21	.	+	0	ID=cds00001;Parent=mRNA00001;Name=edenprotein.1
+Chr01	KBase	mRNA	1	21	.	+	0	ID=mrna00001;Name=mrna00001
+Chr01	KBase	CDS	1	21	.	+	0	ID=cds00001;Parent=mrna00001;Name=cds00001
