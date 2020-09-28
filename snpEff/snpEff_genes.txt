@@ -1,4 +1,0 @@
-# The following table is formatted as tab separated values. 
-#GeneName	GeneId	TranscriptId	BioType	variants_impact_HIGH	variants_impact_LOW	variants_impact_MODERATE	variants_impact_MODIFIER	variants_effect_downstream_gene_variant	variants_effect_missense_variant	variants_effect_splice_region_variant	variants_effect_stop_gained	variants_effect_stop_retained_variant	variants_effect_synonymous_variant	variants_effect_upstream_gene_variant
-CDS_1_1_18	GENE_CDS_1_1_18	TRANSCRIPT_CDS_1_1_18	protein_coding	0	3	2	3	3	2	1	0	1	2	0
-CDS_1_21_38	GENE_CDS_1_21_38	TRANSCRIPT_CDS_1_21_38	protein_coding	1	1	1	5	0	1	0	1	0	1	5
