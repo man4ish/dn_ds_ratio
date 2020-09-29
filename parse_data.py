@@ -9,7 +9,7 @@ class parse_dataUtils:
             mutation_codon_data = json.load(mcf)
         return mutation_codon_data
 
-    def get_codon(self, seq, gene_id):
+    def get_codon(self, seq, gene_id, diffmap):
         codon_list = []
         mutation_codon_data = self.getmutation_table()
 
@@ -30,10 +30,14 @@ class parse_dataUtils:
             N = N + (N1 + N2 + N3)
             S = S + (S1 + S2 + S3)
             codon.append(seq[start:end])
-            #codon.append((cds_start - 1) + start + 1)
-            #codon.append((cds_start - 1) + end)
-            #codon.append(str((cds_start - 1) + 3 * i + 1) + ", " + str((cds_start - 1) + 3 * i + 2) + ", " + str(
-            #    (cds_start - 1) + 3 * i + 3))
+            cds_start = diffmap[start]
+            cds_end =  diffmap[end]
+            codon.append(cds_start)
+            codon.append(cds_end)
+            nt_pos1 = diffmap[start]
+            nt_pos2 = diffmap[start+1]
+            nt_pos3 = diffmap[end]
+            codon.append(str(nt_pos1) + ", " + str(nt_pos2) + ", " + str(nt_pos3))
             codon.append(N)
             codon.append(S)
             codon_list.append(codon)
@@ -44,18 +48,61 @@ class parse_dataUtils:
         '''generate triplets from ref seq'''
 
         for chr in chr_dict.keys():
+            posmap = {}
+
+            gdiff = 0
+            cds_pos = 1
             for genes in chr_dict[chr]:
                 trascipt_seq = ''
+                diffmap = {}
+                cds_global_pos_map = {}
                 for gene_id, cds_list in genes.items():
+
+                    c = 1
+
+                    min = cds_list[0][0]
+                    print("min = " + min)
+
                     for cds_coordinates in cds_list:
+                        if(c > 1):
+                            print(cds_coordinates)
+                            print(c)
+                            print(cds_list[c-1])
+                            print(cds_list[c-2])
+                            diff  = int((cds_list[c-1])[0]) - int((cds_list[c-2])[1]) -1
+
+                            print(diff)
+                            gdiff = gdiff + diff
+                            print(gdiff)
+                            print(">>>>>>>")
                         min = int(cds_coordinates[0])
                         max = int(cds_coordinates[1])
-                        print(min, max)
+
+                        for i in range(min, max+1):
+                            #posmap[i] = i
+                            diffmap[cds_pos] = gdiff
+                            #
+                            cds_pos = cds_pos + 1
+
+
+
+
+                        c = c + 1
+
                         trascipt_seq  = trascipt_seq  + seq[min-1:max]
                     print(gene_id, trascipt_seq)
-                    print(self.get_codon(trascipt_seq, gene_id))
+                    #print(posmap)
+                    print(diffmap)
 
+                    fkey  = list(diffmap.keys())[0]
 
+                    count = 0
+                    for key in diffmap.keys():
+                        #print(str(key-fkey ) + "\t" + str(diffmap[key] + fkey + count))
+                        cds_global_pos_map[key-fkey ] = diffmap[key] + fkey + count
+                        count = count + 1
+                    print(cds_global_pos_map)
+                    print(self.get_codon(trascipt_seq, gene_id, cds_global_pos_map))
 
 
         '''
