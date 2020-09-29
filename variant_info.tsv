@@ -1,4 +1,13 @@
-Chr01	C	G	8	8	2	7	CCC	missense_variant	{'A': 0, 'C': '100', 'G': '200', 'T': 0}
-Chr01	G	C	12	12	3	10	GGG	synonymous_variant	{'A': 0, 'C': '200', 'G': '100', 'T': 0}
-Chr01	T	A	14	14	2	13	TTT	missense_variant	{'A': '200', 'C': 0, 'G': 0, 'T': '100'}
-Chr01	T	C	15	15	3	13	TTT	synonymous_variant	{'A': 0, 'C': '200', 'G': 0, 'T': '100'}
+#chr	ref	alt	pos	codon number	pos in codon	codon start	codon	mutation type	coverage
+Chr01	T	C	2	1	2	1	ATG	start_lost	{'A': 0, 'C': '100', 'G': 0, 'T': '0'}
+Chr01	C	T	4	2	1	4	AAA	splice_region_variant&synonymous_variant	{'A': 0, 'C': '10', 'G': 0, 'T': '20'}
+Chr01	T	G	5	2	2	4	AAA	missense_variant&splice_region_variant	{'A': 0, 'C': 0, 'G': '50', 'T': '10'}
+Chr01	G	C,T	25	0	1	25	CCC	splice_acceptor_variant&splice_region_variant&intron_variant	{'A': 0, 'C': 0, 'G': '10', 'T': 0, 'C,T': '30'}
+Chr01	T	A	26	6	2	25	CCC	splice_region_variant&synonymous_variant	{'A': '200', 'C': 0, 'G': 0, 'T': '0'}
+Chr01	G	C	27	7	3	25	CCC	splice_region_variant&synonymous_variant	{'A': 0, 'C': '200', 'G': '10', 'T': 0}
+Chr01	C	G	28	1	1	28	GGG	missense_variant	{'A': 0, 'C': '10', 'G': '200', 'T': 0}
+Chr01	A	T	29	1	2	28	GGG	missense_variant&splice_region_variant	{'A': '0', 'C': 0, 'G': 0, 'T': '200'}
+Chr01	C	G,A	30	1	3	28	GGG	missense_variant&splice_region_variant	{'A': 0, 'C': '10', 'G': 0, 'T': 0, 'G,A': '30'}
+Chr01	A	C	44	3	2	43	CCC	splice_region_variant&synonymous_variant	{'A': '10', 'C': '50', 'G': 0, 'T': 0}
+Chr01	G	A	45	4	3	43	CCC	missense_variant&splice_region_variant	{'A': '20', 'C': 0, 'G': '10', 'T': 0}
+Chr01	A	G	47	4	2	46	GGG	missense_variant&splice_region_variant	{'A': '0', 'C': 0, 'G': '100', 'T': 0}

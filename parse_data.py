@@ -1,5 +1,8 @@
-import os
+
 import json
+import csv
+import os
+
 class parse_dataUtils:
 
     def getmutation_table(self):
@@ -9,14 +12,16 @@ class parse_dataUtils:
             mutation_codon_data = json.load(mcf)
         return mutation_codon_data
 
-    def get_codon(self, seq, gene_id, diffmap):
+    def get_codon(self, chr, seq, gene_id, diffmap):
         codon_list = []
         mutation_codon_data = self.getmutation_table()
 
         for i in range(int(len(seq) / 3)):
+            codon_num = i+1
             codon = []
             start = 3 * i
             end = 3 * i + 3
+            codon.append(chr)
             codon.append(gene_id)
             triplet = seq[start:end]
             N = 0
@@ -30,14 +35,15 @@ class parse_dataUtils:
             N = N + (N1 + N2 + N3)
             S = S + (S1 + S2 + S3)
             codon.append(seq[start:end])
-            cds_start = diffmap[start]
-            cds_end =  diffmap[end]
-            codon.append(cds_start)
-            codon.append(cds_end)
+            cds_start = start +1
+            cds_end =  end
+            codon.append(diffmap[start])
+            codon.append(diffmap[start + 2])
             nt_pos1 = diffmap[start]
             nt_pos2 = diffmap[start+1]
-            nt_pos3 = diffmap[end]
+            nt_pos3 = diffmap[start + 2]
             codon.append(str(nt_pos1) + ", " + str(nt_pos2) + ", " + str(nt_pos3))
+            codon.append(codon_num)
             codon.append(N)
             codon.append(S)
             codon_list.append(codon)
@@ -46,7 +52,7 @@ class parse_dataUtils:
 
     def get_triplets(self, seq, chr_dict):
         '''generate triplets from ref seq'''
-
+        codon_list = []
         for chr in chr_dict.keys():
             posmap = {}
 
@@ -60,21 +66,21 @@ class parse_dataUtils:
 
                     c = 1
 
-                    min = cds_list[0][0]
-                    print("min = " + min)
+                    #min = cds_list[0][0]
+                    #print("min = " + min)
 
                     for cds_coordinates in cds_list:
                         if(c > 1):
-                            print(cds_coordinates)
-                            print(c)
-                            print(cds_list[c-1])
-                            print(cds_list[c-2])
+                            #print(cds_coordinates)
+                            #print(c)
+                            #print(cds_list[c-1])
+                            #print(cds_list[c-2])
                             diff  = int((cds_list[c-1])[0]) - int((cds_list[c-2])[1]) -1
 
-                            print(diff)
+                            #print(diff)
                             gdiff = gdiff + diff
-                            print(gdiff)
-                            print(">>>>>>>")
+                            #print(gdiff)
+                            #print(">>>>>>>")
                         min = int(cds_coordinates[0])
                         max = int(cds_coordinates[1])
 
@@ -83,16 +89,12 @@ class parse_dataUtils:
                             diffmap[cds_pos] = gdiff
                             #
                             cds_pos = cds_pos + 1
-
-
-
-
                         c = c + 1
 
                         trascipt_seq  = trascipt_seq  + seq[min-1:max]
-                    print(gene_id, trascipt_seq)
+                    #print(gene_id, trascipt_seq)
                     #print(posmap)
-                    print(diffmap)
+                    #print(diffmap)
 
                     fkey  = list(diffmap.keys())[0]
 
@@ -101,38 +103,9 @@ class parse_dataUtils:
                         #print(str(key-fkey ) + "\t" + str(diffmap[key] + fkey + count))
                         cds_global_pos_map[key-fkey ] = diffmap[key] + fkey + count
                         count = count + 1
-                    print(cds_global_pos_map)
-                    print(self.get_codon(trascipt_seq, gene_id, cds_global_pos_map))
-
-
-        '''
-        codon_list = []
-        mutation_codon_data = self.getmutation_table()
-
-        for i in range(int(len(seq) / 3)):
-            codon = []
-            start = 3 * i
-            end = 3 * i + 3
-            codon.append(gene_id)
-            triplet = seq[start:end]
-            N = 0
-            S = 0
-            N1 = mutation_codon_data[triplet + "_N_1"]
-            N2 = mutation_codon_data[triplet + "_N_2"]
-            N3 = mutation_codon_data[triplet + "_N_3"]
-            S1 = mutation_codon_data[triplet + "_S_1"]
-            S2 = mutation_codon_data[triplet + "_S_2"]
-            S3 = mutation_codon_data[triplet + "_S_3"]
-            N = N + (N1 + N2 + N3)
-            S = S + (S1 + S2 + S3)
-            codon.append(seq[start:end])
-            codon.append((cds_start -1) + start +1)
-            codon.append((cds_start - 1) + end)
-            codon.append(str((cds_start -1) + 3 * i + 1) + ", " + str((cds_start -1) + 3 * i + 2) + ", " + str((cds_start -1) +3 * i + 3))
-            codon.append(N)
-            codon.append(S)
-            codon_list.append(codon)'''
-        #return codon_list
+                    #print(cds_global_pos_map)
+                    codon_list.append(self.get_codon(chr, trascipt_seq, gene_id, cds_global_pos_map))
+        return codon_list
 
     def read_gff_file(self, gff_file):
         '''read gtf file'''
@@ -178,6 +151,12 @@ class parse_dataUtils:
         else:
             return False
 
+    def filter_codon_change(self, ann_field):
+        if 'p.' in ann_field:
+            return True
+        else:
+            return False
+
     def read_vcf(self, vcf_file):
         '''parse vcf file'''
 
@@ -186,6 +165,7 @@ class parse_dataUtils:
             line = fp.readline()
             while line:
                 if not line.startswith("#"):
+                    print(line)
                     var = []
                     coverage = {"A": 0, "C": 0, "G": 0, "T": 0}
                     line = line.strip()
@@ -193,14 +173,33 @@ class parse_dataUtils:
                     var.append(rec[0])
                     var.append(rec[3])
                     var.append(rec[4])
-                    var.append(rec[1])
+                    #var.append(rec[1])
                     annotation = rec[7]
                     var_field = filter(self.filter_ann, annotation.split("|"))
+                    mut_filed = filter(self.filter_codon_change, annotation.split("|"))
+
+
+                    #exit(annotation.split("|"))
                     seq = self.read_refseq("sample.fa")
                     pos_in_codon = 0
+                    field_num = 0
+                    pos_field = 0
+                    mutation_field = ""
                     for variation in var_field:
                         pos_in_codon = variation[2:(variation.find('>') - 1)]
+                        mutation_field += variation
+                        print(variation)
                     var.append(pos_in_codon)  # get from snpeff results
+                    print(mutation_field)
+
+                    codon_number = 0
+                    for mutation in mut_filed:
+                        codon_number = mutation[5:6]
+                        #print(mutation)
+
+                    var.append(codon_number)
+
+
                     mod = int(pos_in_codon) % 3
                     quotient = int(pos_in_codon) // 3
                     if (mod == 0):
@@ -247,13 +246,28 @@ if __name__ == "__main__":
     pu = parse_dataUtils()
     dir = "/Users/manishkumar/Desktop/apps/SNPGenie/Analysis_with_ADinInfo/code/data/two_gene_one_transcript_multiple_cds_one_positive_one_negative"
     sequence =  pu.read_refseq(os.path.join(dir, "sample.fa"))
-    vcf_data = pu.read_vcf(os.path.join(dir, "sample.ann.vcf"))
+    var_list = pu.read_vcf(os.path.join(dir, "sample.ann.vcf"))
+
+    if os.path.exists("variant_info.tsv"):
+        os.remove("variant_info.tsv")
+    with open('variant_info.tsv', 'w') as variant_tmp_file:
+        var_temp = csv.writer(variant_tmp_file, delimiter='\t')
+        var_temp.writerow(["#chr", "ref", "alt", "pos", "codon number", "pos in codon", "codon start", "codon", "mutation type", "coverage"])
+        for var_gene_list in var_list:
+            var_temp.writerow(var_gene_list)
+
     gff_data = pu.read_gff_file(os.path.join(dir, "sample_file.gff"))
 
-    pu.get_triplets(sequence, gff_data)
+    codon_list = pu.get_triplets(sequence, gff_data)
+    #print(codon_list)
 
-    #print(gff_data)
+    if os.path.exists("codon_results_temp.tsv"):
+        os.remove("codon_results_temp.tsv")
+    with open('codon_results_temp.tsv', 'w') as cdr_tmp_file:
+        cdr_temp = csv.writer(cdr_tmp_file, delimiter='\t')
+        cdr_temp.writerow(["#chr", "gene", "codon", "codon start", "codon end", "codon positions", "codon number", "N", "S"])
+        for gene_codon_list in codon_list:
+            for codon in gene_codon_list:
+                cdr_temp.writerow(codon)
 
-    #print(sequence)
 
-    
