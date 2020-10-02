@@ -1,0 +1,127 @@
+Reading GFF3 data file  : '/Users/manishkumar/Desktop/apps/SNPGenie/Analysis_with_ADinInfo/code/data/new_dataset/snpEff/./data/kbase_v1/genes.gff'
+
+	Total: 2 markers added.
+
+	Create exons from CDS (if needed): ..
+	Exons created for 1 transcripts.
+
+	Deleting redundant exons (if needed): 
+		Total transcripts with deleted exons: 0
+
+	Collapsing zero length introns (if needed): 
+		Total collapsed transcripts: 0
+	Reading sequences   :
+	FASTA file: '/Users/manishkumar/Desktop/apps/SNPGenie/Analysis_with_ADinInfo/code/data/new_dataset/snpEff/./data/genomes/kbase_v1.fa' not found.
+	Reading FASTA file: '/Users/manishkumar/Desktop/apps/SNPGenie/Analysis_with_ADinInfo/code/data/new_dataset/snpEff/./data/kbase_v1/sequences.fa'
+		Reading sequence '1', length: 60
+		Adding genomic sequences to exons: 	Done (2 sequences added, 0 ignored).
+	Total: 2 sequences added, 0 sequences ignored.
+
+	Adjusting transcripts: 
+	Adjusting genes: 
+	Adjusting chromosomes lengths: 
+	Ranking exons: 
+	Create UTRs from CDS (if needed): 
+	Correcting exons based on frame information.
+	
+	Remove empty chromosomes: 
+
+	Marking as 'coding' from CDS information: 
+	Done: 0 transcripts marked
+#-----------------------------------------------
+# Genome name                : 'kbase_v1'
+# Genome version             : 'kbase_v1'
+# Genome ID                  : 'kbase_v1[0]'
+# Has protein coding info    : true
+# Has Tr. Support Level info : true
+# Genes                      : 3
+# Protein coding genes       : 2
+#-----------------------------------------------
+# Transcripts                : 2
+# Avg. transcripts per gene  : 0.67
+# TSL transcripts            : 0
+#-----------------------------------------------
+# Checked transcripts        : 
+#               AA sequences :      0 ( 0.00% )
+#              DNA sequences :      0 ( 0.00% )
+#-----------------------------------------------
+# Protein coding transcripts : 2
+#              Length errors :      1 ( 50.00% )
+#  STOP codons in CDS errors :      0 ( 0.00% )
+#         START codon errors :      1 ( 50.00% )
+#        STOP codon warnings :      1 ( 50.00% )
+#              UTR sequences :      0 ( 0.00% )
+#               Total Errors :      2 ( 100.00% )
+# WARNING                    : No protein coding transcript has UTR
+#-----------------------------------------------
+# Cds                        : 2
+# Exons                      : 2
+# Exons with sequence        : 2
+# Exons without sequence     : 0
+# Avg. exons per transcript  : 1.00
+#-----------------------------------------------
+# Number of chromosomes      : 1
+# Chromosomes                : Format 'chromo_name size codon_table'
+#		'1'	60	Standard
+#-----------------------------------------------
+
+		Chr01	2	.	T	C	65.28	FS_filter;SOR_filter	ANN=C|start_lost|HIGH|cds00001|GENE_cds00001|transcript|mRNA00001|protein_coding|1/2|c.2T>C|p.Met1?|2/23|2/23|1/6||WARNING_TRANSCRIPT_INCOMPLETE,C|intragenic_variant|MODIFIER|gene00001|gene00001|gene_variant|gene00001|||n.2T>C||||||,C|non_coding_transcript_variant|MODIFIER|mrna00001|null|transcript|mrna00001|protein_coding||||||||WARNING_TRANSCRIPT_NO_START_CODON;LOF=(cds00001|GENE_cds00001|1|1.00)	GT:DP:AD	0/1:100:0,100
+
+*******
+[['C', 'start_lost', 'cds00001', 'mRNA00001', 'c.2T>C', 'p.Met1?']]
+2
+*******
+c.2T>C
+n.2T>C
+c.2T>Cn.2T>C
+Chr01	4	.	T	A	65.28	FS_filter;SOR_filter	ANN=A|missense_variant|MODERATE|cds00001|GENE_cds00001|transcript|mRNA00001|protein_coding|1/2|c.4T>A|p.Phe2Ile|4/23|4/23|2/6||WARNING_TRANSCRIPT_INCOMPLETE,A|intragenic_variant|MODIFIER|gene00001|gene00001|gene_variant|gene00001|||n.4T>A||||||,A|non_coding_transcript_variant|MODIFIER|mrna00001|null|transcript|mrna00001|protein_coding||||||||WARNING_TRANSCRIPT_NO_START_CODON	GT:DP:AD	0/1:30:10,20
+
+*******
+[['A', 'missense_variant', 'cds00001', 'mRNA00001', 'c.4T>A', 'p.Phe2Ile']]
+1
+*******
+c.4T>A
+n.4T>A
+c.4T>An.4T>A
+Chr01	5	.	T	G	65.28	FS_filter;SOR_filter	ANN=G|missense_variant|MODERATE|cds00001|GENE_cds00001|transcript|mRNA00001|protein_coding|1/2|c.5T>G|p.Phe2Cys|5/23|5/23|2/6||WARNING_TRANSCRIPT_INCOMPLETE,G|intragenic_variant|MODIFIER|gene00001|gene00001|gene_variant|gene00001|||n.5T>G||||||,G|non_coding_transcript_variant|MODIFIER|mrna00001|null|transcript|mrna00001|protein_coding||||||||WARNING_TRANSCRIPT_NO_START_CODON	GT:DP:AD	0/1:60:10,50
+
+*******
+[['G', 'missense_variant', 'cds00001', 'mRNA00001', 'c.5T>G', 'p.Phe2Cys']]
+2
+*******
+c.5T>G
+n.5T>G
+c.5T>Gn.5T>G
+Chr01	25	.	C	G	65.28	FS_filter;SOR_filter	ANN=G|splice_region_variant&synonymous_variant|LOW|cds00001|GENE_cds00001|transcript|mRNA00001|protein_coding|2/2|c.22C>G|p.???8???|22/23|22/23|8/6||WARNING_TRANSCRIPT_INCOMPLETE,G|intragenic_variant|MODIFIER|gene00001|gene00001|gene_variant|gene00001|||n.25C>G||||||,G|non_coding_transcript_variant|MODIFIER|mrna00001|null|transcript|mrna00001|protein_coding||||||||WARNING_TRANSCRIPT_NO_START_CODON	GT:DP:AD	0/1:60:10,30,20
+
+*******
+[['G', 'splice_region_variant&synonymous_variant', 'cds00001', 'mRNA00001', 'c.22C>G', 'p.???8???']]
+1
+*******
+c.22C>G
+n.25C>G
+c.22C>Gn.25C>G
+Chr01	26	.	T	C	65.28	FS_filter;SOR_filter	ANN=C|splice_region_variant&synonymous_variant|LOW|cds00001|GENE_cds00001|transcript|mRNA00001|protein_coding|2/2|c.23T>C|p.???8???|23/23|23/23|8/6||WARNING_TRANSCRIPT_INCOMPLETE,C|intragenic_variant|MODIFIER|gene00001|gene00001|gene_variant|gene00001|||n.26T>C||||||,C|non_coding_transcript_variant|MODIFIER|mrna00001|null|transcript|mrna00001|protein_coding||||||||WARNING_TRANSCRIPT_NO_START_CODON	GT:DP:AD	0/1:200:0,200
+
+*******
+[['C', 'splice_region_variant&synonymous_variant', 'cds00001', 'mRNA00001', 'c.23T>C', 'p.???8???']]
+2
+*******
+c.23T>C
+n.26T>C
+c.23T>Cn.26T>C
+Chr01	27	.	A	G	65.28	FS_filter;SOR_filter	ANN=G|downstream_gene_variant|MODIFIER|cds00001|GENE_cds00001|transcript|mRNA00001|protein_coding||c.*1A>G|||||1|WARNING_TRANSCRIPT_INCOMPLETE,G|intragenic_variant|MODIFIER|gene00001|gene00001|gene_variant|gene00001|||n.27A>G||||||,G|non_coding_transcript_variant|MODIFIER|mrna00001|null|transcript|mrna00001|protein_coding||||||||WARNING_TRANSCRIPT_NO_START_CODON	GT:DP:AD	0/1:210:10,200
+
+*******
+None
+*******
+c.*1A>G
+n.27A>G
+c.*1A>Gn.27A>G
+Chr01	KBase	gene	1	30	.	+	0	ID=gene00001;Name=gene00001
+ID=gene00001;Name=gene00001
+gene00001
+Chr01
+Chr01	KBase	mRNA	1	30	.	+	0	ID=mrna00001;Name=mrna00001
+Chr01	KBase	CDS	1	12	.	+	0	ID=cds00001;Parent=mRNA00001;Name=cds00001
+Chr01	KBase	CDS	16	26	.	+	0	ID=cds00002;Parent=mRNA00001;Name=cds00002

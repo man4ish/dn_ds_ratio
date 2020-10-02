@@ -1,7 +1,7 @@
-
 import json
 import csv
 import os
+import re
 
 class parse_dataUtils:
 
@@ -11,6 +11,88 @@ class parse_dataUtils:
         with open('json_data/mutation_codon.json') as mcf:
             mutation_codon_data = json.load(mcf)
         return mutation_codon_data
+
+    def reverse_complement(self, cds_seq):
+        '''
+
+        :param cds_seq:
+        :return:
+        '''
+        'reverse'
+        print(cds_seq)
+        mapping = cds_seq.maketrans('ATCG',"TAGC")
+        return cds_seq.translate(mapping)[::-1]
+
+
+    def split_and_check(self, annot):
+        ANNOT = {
+            "synonymous_variant": 1,
+            "missense_variant": 1,
+            "stop_gained": 1,
+            "start_lost": 1,
+            "start_gained": 1,
+            "stop_lost": 1
+        }
+
+        all_annot = annot.split("&")
+
+        i = 0
+
+        for annot1 in all_annot:
+            if annot1 not in ANNOT:
+                continue
+            else:
+                i = i + 1
+
+        if (i > 0):
+            return i
+        else:
+            return None
+
+    def parse_annotation(self, info_string):
+        """
+        parses annotation string into a structure
+        [gene_id, transcript_id,
+        :param ann_string:
+        :return:
+        """
+        #
+        # Fields are delimited by ;
+        # annotation field starts with ANN=
+        # Each allele-effect in annotation field is separated by ,
+        annotation_info = list()
+
+        info = info_string.split(";")
+
+        ann_string = None
+        for j in info:
+            if j.startswith("ANN="):
+                ann_string = j
+
+        if ann_string is None:
+            return None
+        # TODO: Add more variant effects that
+        # TODO: may not be affecting the protein coding region
+
+        allele_effect_list = ann_string.split(",")
+        for a in allele_effect_list:
+            eff = a.split("|")
+            allele = eff[0].replace("ANN=", "")
+            annot = eff[1]
+
+            if (self.split_and_check(annot) is None):
+                continue
+
+            gene_id = eff[3]
+            transcript_id = eff[6]
+            base = eff[9]
+            prot = eff[10]
+            annotation_info.append([allele, annot, gene_id, transcript_id, base, prot])
+
+        if annotation_info:
+            return annotation_info
+        else:
+            return None
 
     def get_codon(self, chr, seq, gene_id, diffmap):
         codon_list = []
@@ -24,8 +106,12 @@ class parse_dataUtils:
             codon.append(chr)
             codon.append(gene_id)
             triplet = seq[start:end]
+
             N = 0
             S = 0
+            #TODO: check if key exist otherwise make value = 0
+
+
             N1 = mutation_codon_data[triplet + "_N_1"]
             N2 = mutation_codon_data[triplet + "_N_2"]
             N3 = mutation_codon_data[triplet + "_N_3"]
@@ -34,14 +120,17 @@ class parse_dataUtils:
             S3 = mutation_codon_data[triplet + "_S_3"]
             N = N + (N1 + N2 + N3)
             S = S + (S1 + S2 + S3)
+
             codon.append(seq[start:end])
-            cds_start = start +1
-            cds_end =  end
+            #cds_start = start +1
+            #cds_end =  end
             codon.append(diffmap[start])
             codon.append(diffmap[start + 2])
+
             nt_pos1 = diffmap[start]
             nt_pos2 = diffmap[start+1]
             nt_pos3 = diffmap[start + 2]
+
             codon.append(str(nt_pos1) + ", " + str(nt_pos2) + ", " + str(nt_pos3))
             codon.append(codon_num)
             codon.append(N)
@@ -96,6 +185,8 @@ class parse_dataUtils:
                     #print(posmap)
                     #print(diffmap)
 
+                    #TODO: if orientation is '-' , reverse transcribe the sequence(trascipt_seq)
+
                     fkey  = list(diffmap.keys())[0]
 
                     count = 0
@@ -115,6 +206,7 @@ class parse_dataUtils:
             for line in fp:
                 if not line.startswith("#"):
                     line = line.strip()
+                    print(line)
                     rec = line.split("\t")
                     chr = rec[0]
 
@@ -122,6 +214,8 @@ class parse_dataUtils:
                         print(rec[8])
                         id = (rec[8]).split(";")[0]
                         gene_name = id.split("=")[1]
+                        orientation = rec[6]
+                        print(orientation)
                         print(gene_name)
                         gene_dict = {}
                         cds_flag = 0
@@ -132,9 +226,11 @@ class parse_dataUtils:
                         cds_end = rec[4]
                         cds_flag = 1
                         if(gene_name in gene_dict.keys()):
-                            gene_dict[gene_name].append([cds_start, cds_end])
+                            #gene_dict[gene_name] = {'orient': orientation, 'cds_coordinates': [[cds_start, cds_end]]}
+                            gene_dict[gene_name]['cds_coordinates'].append([cds_start, cds_end])
                         else:
-                            gene_dict[gene_name] = [[cds_start, cds_end]]
+                            gene_dict[gene_name] = {'orient':orientation, 'cds_coordinates': [[cds_start, cds_end]]}
+                            #gene_dict[gene_name] = [[cds_start, cds_end]]
 
                     if(cds_flag):
                         if(chr in chr_dict.keys()):
@@ -157,7 +253,7 @@ class parse_dataUtils:
         else:
             return False
 
-    def read_vcf(self, vcf_file):
+    def read_vcf(self, vcf_file, seq):
         '''parse vcf file'''
 
         varlist = []
@@ -173,14 +269,50 @@ class parse_dataUtils:
                     var.append(rec[0])
                     var.append(rec[3])
                     var.append(rec[4])
-                    #var.append(rec[1])
+                    pos = int(rec[1])
+                    var.append(rec[1])
+
                     annotation = rec[7]
+                    print("*******")
+                    annot_list = self.parse_annotation(annotation)
+                    print(annot_list)
+                    cds_list = []
+                    cds_pos_list = []
+                    cds_num_list = []
+                    mutation_type_list = []
+                    #allle_dict ={}
+                    codon_start_pos_list = []
+                    postion_in_codon_list = []
+                    if(annot_list):
+                        for annot in annot_list:
+
+                            m = re.match( r"\w.(\d+)\w>\w", annot[4])
+
+                            cds_pos = m.groups()[0]
+                            pos_in_codon = int(cds_pos) % 3
+                            if(pos_in_codon == 0):
+                                pos_in_codon = 3
+                            codon_start_pos = pos - pos_in_codon + 1
+                            codon_start_pos_list.append(str(codon_start_pos))
+                            postion_in_codon_list.append(str(pos_in_codon))
+
+                            print(pos_in_codon)
+                            cds_pos_list.append(cds_pos)
+                            codon_num = (annot[5])[5:6]
+                            cds_num_list.append(codon_num)
+                            cds_list.append(annot[2])
+                            mutation_type_list.append(annot[1])
+
+                    var.append(",".join(cds_num_list))
+                    var.append(','.join(postion_in_codon_list))
+
+                    print("*******")
                     var_field = filter(self.filter_ann, annotation.split("|"))
                     mut_filed = filter(self.filter_codon_change, annotation.split("|"))
 
 
                     #exit(annotation.split("|"))
-                    seq = self.read_refseq("sample.fa")
+                    #seq = self.read_refseq("sample.fa")
                     pos_in_codon = 0
                     field_num = 0
                     pos_field = 0
@@ -189,16 +321,19 @@ class parse_dataUtils:
                         pos_in_codon = variation[2:(variation.find('>') - 1)]
                         mutation_field += variation
                         print(variation)
-                    var.append(pos_in_codon)  # get from snpeff results
+
+                    #var.append(pos_in_codon)  # get from snpeff results
+
                     print(mutation_field)
 
+                    '''
                     codon_number = 0
                     for mutation in mut_filed:
                         codon_number = mutation[5:6]
                         #print(mutation)
 
                     var.append(codon_number)
-
+                    '''
 
                     mod = int(pos_in_codon) % 3
                     quotient = int(pos_in_codon) // 3
@@ -210,13 +345,13 @@ class parse_dataUtils:
                     codon = seq[codon_start - 1:codon_start + 2]
                     if (mod == 0):
                         mod = 3
-                    var.append(mod)
-                    var.append(codon_start)
+                    #var.append(mod)
+                    var.append(','.join(codon_start_pos_list))
                     var.append(codon)  # get from snpeff results
 
                     var_class = annotation.split("|")[1]
-
-                    var.append(var_class)  # get from snpeff results
+                    var.append(','.join(mutation_type_list))
+                    #var.append(var_class)  # get from snpeff results
                     format = (rec[8]).split(":")
                     DP_index = format.index("DP")
                     AD_index = format.index("AD")
@@ -244,9 +379,12 @@ class parse_dataUtils:
 
 if __name__ == "__main__":
     pu = parse_dataUtils()
-    dir = "/Users/manishkumar/Desktop/apps/SNPGenie/Analysis_with_ADinInfo/code/data/two_gene_one_transcript_multiple_cds_one_positive_one_negative"
+    rev_comp = pu.reverse_complement("ATCGTGTT")
+
+
+    dir = "/Users/manishkumar/Desktop/apps/SNPGenie/Analysis_with_ADinInfo/code/data/new_dataset"
     sequence =  pu.read_refseq(os.path.join(dir, "sample.fa"))
-    var_list = pu.read_vcf(os.path.join(dir, "sample.ann.vcf"))
+    var_list = pu.read_vcf(os.path.join(dir, "sample.ann.vcf"), sequence)
 
     if os.path.exists("variant_info.tsv"):
         os.remove("variant_info.tsv")
@@ -257,7 +395,7 @@ if __name__ == "__main__":
             var_temp.writerow(var_gene_list)
 
     gff_data = pu.read_gff_file(os.path.join(dir, "sample_file.gff"))
-
+    exit(gff_data)
     codon_list = pu.get_triplets(sequence, gff_data)
     #print(codon_list)
 

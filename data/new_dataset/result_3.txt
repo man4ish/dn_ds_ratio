@@ -1,0 +1,218 @@
+Reading GFF3 data file  : '/Users/manishkumar/Desktop/apps/SNPGenie/Analysis_with_ADinInfo/code/data/new_dataset/snpEff/./data/kbase_v1/genes.gff'
+
+	Total: 4 markers added.
+
+	Create exons from CDS (if needed): ....
+	Exons created for 2 transcripts.
+
+	Deleting redundant exons (if needed): 
+		Total transcripts with deleted exons: 0
+
+	Collapsing zero length introns (if needed): 
+		Total collapsed transcripts: 0
+	Reading sequences   :
+	FASTA file: '/Users/manishkumar/Desktop/apps/SNPGenie/Analysis_with_ADinInfo/code/data/new_dataset/snpEff/./data/genomes/kbase_v1.fa' not found.
+	Reading FASTA file: '/Users/manishkumar/Desktop/apps/SNPGenie/Analysis_with_ADinInfo/code/data/new_dataset/snpEff/./data/kbase_v1/sequences.fa'
+		Reading sequence '1', length: 60
+		Adding genomic sequences to exons: 	Done (4 sequences added, 0 ignored).
+	Total: 4 sequences added, 0 sequences ignored.
+
+	Adjusting transcripts: 
+	Adjusting genes: 
+	Adjusting chromosomes lengths: 
+	Ranking exons: 
+	Create UTRs from CDS (if needed): 
+	Correcting exons based on frame information.
+	
+	Remove empty chromosomes: 
+
+	Marking as 'coding' from CDS information: 
+	Done: 0 transcripts marked
+#-----------------------------------------------
+# Genome name                : 'kbase_v1'
+# Genome version             : 'kbase_v1'
+# Genome ID                  : 'kbase_v1[0]'
+# Has protein coding info    : true
+# Has Tr. Support Level info : true
+# Genes                      : 5
+# Protein coding genes       : 3
+#-----------------------------------------------
+# Transcripts                : 4
+# Avg. transcripts per gene  : 0.80
+# TSL transcripts            : 0
+#-----------------------------------------------
+# Checked transcripts        : 
+#               AA sequences :      0 ( 0.00% )
+#              DNA sequences :      0 ( 0.00% )
+#-----------------------------------------------
+# Protein coding transcripts : 4
+#              Length errors :      0 ( 0.00% )
+#  STOP codons in CDS errors :      0 ( 0.00% )
+#         START codon errors :      2 ( 50.00% )
+#        STOP codon warnings :      4 ( 100.00% )
+#              UTR sequences :      0 ( 0.00% )
+#               Total Errors :      2 ( 50.00% )
+# WARNING                    : No protein coding transcript has UTR
+#-----------------------------------------------
+# Cds                        : 4
+# Exons                      : 4
+# Exons with sequence        : 4
+# Exons without sequence     : 0
+# Avg. exons per transcript  : 1.00
+#-----------------------------------------------
+# Number of chromosomes      : 1
+# Chromosomes                : Format 'chromo_name size codon_table'
+#		'1'	60	Standard
+#-----------------------------------------------
+
+		Chr01	2	.	T	C	65.28	FS_filter;SOR_filter	ANN=C|start_lost|HIGH|cds00001|GENE_cds00001|transcript|mRNA00001|protein_coding|1/2|c.2T>C|p.Met1?|2/24|2/24|1/7||WARNING_TRANSCRIPT_NO_STOP_CODON,C|upstream_gene_variant|MODIFIER|mrna00001|null|transcript|mrna00002|protein_coding||c.-28T>C|||||29|WARNING_TRANSCRIPT_NO_START_CODON,C|downstream_gene_variant|MODIFIER|cds00003|GENE_cds00003|transcript|mRNA00002|protein_coding||c.*32A>G|||||32|WARNING_TRANSCRIPT_NO_STOP_CODON,C|intragenic_variant|MODIFIER|gene00001|gene00001|gene_variant|gene00001|||n.2T>C||||||,C|non_coding_transcript_variant|MODIFIER|mrna00001|null|transcript|mrna00001|protein_coding||||||||WARNING_TRANSCRIPT_NO_START_CODON;LOF=(cds00001|GENE_cds00001|1|1.00)	GT:DP:AD	0/1:100:0,100
+
+*******
+[['C', 'start_lost', 'cds00001', 'mRNA00001', 'c.2T>C', 'p.Met1?']]
+2
+*******
+c.2T>C
+c.-28T>C
+c.*32A>G
+n.2T>C
+c.2T>Cc.-28T>Cc.*32A>Gn.2T>C
+Chr01	4	.	T	A	65.28	FS_filter;SOR_filter	ANN=A|missense_variant|MODERATE|cds00001|GENE_cds00001|transcript|mRNA00001|protein_coding|1/2|c.4T>A|p.Phe2Ile|4/24|4/24|2/7||WARNING_TRANSCRIPT_NO_STOP_CODON,A|upstream_gene_variant|MODIFIER|mrna00001|null|transcript|mrna00002|protein_coding||c.-26T>A|||||27|WARNING_TRANSCRIPT_NO_START_CODON,A|downstream_gene_variant|MODIFIER|cds00003|GENE_cds00003|transcript|mRNA00002|protein_coding||c.*30A>T|||||30|WARNING_TRANSCRIPT_NO_STOP_CODON,A|intragenic_variant|MODIFIER|gene00001|gene00001|gene_variant|gene00001|||n.4T>A||||||,A|non_coding_transcript_variant|MODIFIER|mrna00001|null|transcript|mrna00001|protein_coding||||||||WARNING_TRANSCRIPT_NO_START_CODON	GT:DP:AD	0/1:30:10,20
+
+*******
+[['A', 'missense_variant', 'cds00001', 'mRNA00001', 'c.4T>A', 'p.Phe2Ile']]
+1
+*******
+c.4T>A
+c.-26T>A
+c.*30A>T
+n.4T>A
+c.4T>Ac.-26T>Ac.*30A>Tn.4T>A
+Chr01	5	.	T	G	65.28	FS_filter;SOR_filter	ANN=G|missense_variant|MODERATE|cds00001|GENE_cds00001|transcript|mRNA00001|protein_coding|1/2|c.5T>G|p.Phe2Cys|5/24|5/24|2/7||WARNING_TRANSCRIPT_NO_STOP_CODON,G|upstream_gene_variant|MODIFIER|mrna00001|null|transcript|mrna00002|protein_coding||c.-25T>G|||||26|WARNING_TRANSCRIPT_NO_START_CODON,G|downstream_gene_variant|MODIFIER|cds00003|GENE_cds00003|transcript|mRNA00002|protein_coding||c.*29A>C|||||29|WARNING_TRANSCRIPT_NO_STOP_CODON,G|intragenic_variant|MODIFIER|gene00001|gene00001|gene_variant|gene00001|||n.5T>G||||||,G|non_coding_transcript_variant|MODIFIER|mrna00001|null|transcript|mrna00001|protein_coding||||||||WARNING_TRANSCRIPT_NO_START_CODON	GT:DP:AD	0/1:60:10,50
+
+*******
+[['G', 'missense_variant', 'cds00001', 'mRNA00001', 'c.5T>G', 'p.Phe2Cys']]
+2
+*******
+c.5T>G
+c.-25T>G
+c.*29A>C
+n.5T>G
+c.5T>Gc.-25T>Gc.*29A>Cn.5T>G
+Chr01	25	.	C	G	65.28	FS_filter;SOR_filter	ANN=G|missense_variant&splice_region_variant|MODERATE|cds00001|GENE_cds00001|transcript|mRNA00001|protein_coding|2/2|c.22C>G|p.Leu8Val|22/24|22/24|8/7||WARNING_TRANSCRIPT_NO_STOP_CODON,G|upstream_gene_variant|MODIFIER|mrna00001|null|transcript|mrna00002|protein_coding||c.-5C>G|||||6|WARNING_TRANSCRIPT_NO_START_CODON,G|downstream_gene_variant|MODIFIER|cds00003|GENE_cds00003|transcript|mRNA00002|protein_coding||c.*9G>C|||||9|WARNING_TRANSCRIPT_NO_STOP_CODON,G|intragenic_variant|MODIFIER|gene00001|gene00001|gene_variant|gene00001|||n.25C>G||||||,G|non_coding_transcript_variant|MODIFIER|mrna00001|null|transcript|mrna00001|protein_coding||||||||WARNING_TRANSCRIPT_NO_START_CODON	GT:DP:AD	0/1:60:10,30,20
+
+*******
+[['G', 'missense_variant&splice_region_variant', 'cds00001', 'mRNA00001', 'c.22C>G', 'p.Leu8Val']]
+1
+*******
+c.22C>G
+c.-5C>G
+c.*9G>C
+n.25C>G
+c.22C>Gc.-5C>Gc.*9G>Cn.25C>G
+Chr01	26	.	T	C	65.28	FS_filter;SOR_filter	ANN=C|missense_variant&splice_region_variant|MODERATE|cds00001|GENE_cds00001|transcript|mRNA00001|protein_coding|2/2|c.23T>C|p.Leu8Pro|23/24|23/24|8/7||WARNING_TRANSCRIPT_NO_STOP_CODON,C|upstream_gene_variant|MODIFIER|mrna00001|null|transcript|mrna00002|protein_coding||c.-4T>C|||||5|WARNING_TRANSCRIPT_NO_START_CODON,C|downstream_gene_variant|MODIFIER|cds00003|GENE_cds00003|transcript|mRNA00002|protein_coding||c.*8A>G|||||8|WARNING_TRANSCRIPT_NO_STOP_CODON,C|intragenic_variant|MODIFIER|gene00001|gene00001|gene_variant|gene00001|||n.26T>C||||||,C|non_coding_transcript_variant|MODIFIER|mrna00001|null|transcript|mrna00001|protein_coding||||||||WARNING_TRANSCRIPT_NO_START_CODON	GT:DP:AD	0/1:200:0,200
+
+*******
+[['C', 'missense_variant&splice_region_variant', 'cds00001', 'mRNA00001', 'c.23T>C', 'p.Leu8Pro']]
+2
+*******
+c.23T>C
+c.-4T>C
+c.*8A>G
+n.26T>C
+c.23T>Cc.-4T>Cc.*8A>Gn.26T>C
+Chr01	27	.	A	G	65.28	FS_filter;SOR_filter	ANN=G|splice_region_variant&synonymous_variant|LOW|cds00001|GENE_cds00001|transcript|mRNA00001|protein_coding|2/2|c.24A>G|p.Leu8Leu|24/24|24/24|8/7||WARNING_TRANSCRIPT_NO_STOP_CODON,G|upstream_gene_variant|MODIFIER|mrna00001|null|transcript|mrna00002|protein_coding||c.-3A>G|||||4|WARNING_TRANSCRIPT_NO_START_CODON,G|downstream_gene_variant|MODIFIER|cds00003|GENE_cds00003|transcript|mRNA00002|protein_coding||c.*7T>C|||||7|WARNING_TRANSCRIPT_NO_STOP_CODON,G|intragenic_variant|MODIFIER|gene00001|gene00001|gene_variant|gene00001|||n.27A>G||||||,G|non_coding_transcript_variant|MODIFIER|mrna00001|null|transcript|mrna00001|protein_coding||||||||WARNING_TRANSCRIPT_NO_START_CODON	GT:DP:AD	0/1:210:10,200
+
+*******
+[['G', 'splice_region_variant&synonymous_variant', 'cds00001', 'mRNA00001', 'c.24A>G', 'p.Leu8Leu']]
+3
+*******
+c.24A>G
+c.-3A>G
+c.*7T>C
+n.27A>G
+c.24A>Gc.-3A>Gc.*7T>Cn.27A>G
+Chr01	34	.	T	C	65.28	FS_filter;SOR_filter	ANN=C|splice_region_variant&synonymous_variant|LOW|cds00003|GENE_cds00003|transcript|mRNA00002|protein_coding|2/2|c.24A>G|p.Leu8Leu|24/24|24/24|8/7||WARNING_TRANSCRIPT_NO_STOP_CODON,C|downstream_gene_variant|MODIFIER|cds00001|GENE_cds00001|transcript|mRNA00001|protein_coding||c.*7T>C|||||7|WARNING_TRANSCRIPT_NO_STOP_CODON,C|downstream_gene_variant|MODIFIER|mrna00001|null|transcript|mrna00001|protein_coding||c.*4T>C|||||4|WARNING_TRANSCRIPT_NO_START_CODON,C|intragenic_variant|MODIFIER|gene00002|gene00002|gene_variant|gene00002|||n.34T>C||||||,C|non_coding_transcript_variant|MODIFIER|mrna00001|null|transcript|mrna00002|protein_coding||||||||WARNING_TRANSCRIPT_NO_START_CODON	GT:DP:AD	0/1:210:10,200
+
+*******
+[['C', 'splice_region_variant&synonymous_variant', 'cds00003', 'mRNA00002', 'c.24A>G', 'p.Leu8Leu']]
+3
+*******
+c.24A>G
+c.*7T>C
+c.*4T>C
+n.34T>C
+c.24A>Gc.*7T>Cc.*4T>Cn.34T>C
+Chr01	35	.	A	G	65.28	FS_filter;SOR_filter	ANN=G|missense_variant&splice_region_variant|MODERATE|cds00003|GENE_cds00003|transcript|mRNA00002|protein_coding|2/2|c.23T>C|p.Leu8Pro|23/24|23/24|8/7||WARNING_TRANSCRIPT_NO_STOP_CODON,G|downstream_gene_variant|MODIFIER|cds00001|GENE_cds00001|transcript|mRNA00001|protein_coding||c.*8A>G|||||8|WARNING_TRANSCRIPT_NO_STOP_CODON,G|downstream_gene_variant|MODIFIER|mrna00001|null|transcript|mrna00001|protein_coding||c.*5A>G|||||5|WARNING_TRANSCRIPT_NO_START_CODON,G|intragenic_variant|MODIFIER|gene00002|gene00002|gene_variant|gene00002|||n.35A>G||||||,G|non_coding_transcript_variant|MODIFIER|mrna00001|null|transcript|mrna00002|protein_coding||||||||WARNING_TRANSCRIPT_NO_START_CODON	GT:DP:AD	0/1:200:0,200
+
+*******
+[['G', 'missense_variant&splice_region_variant', 'cds00003', 'mRNA00002', 'c.23T>C', 'p.Leu8Pro']]
+2
+*******
+c.23T>C
+c.*8A>G
+c.*5A>G
+n.35A>G
+c.23T>Cc.*8A>Gc.*5A>Gn.35A>G
+Chr01	36	.	G	C,T	65.28	FS_filter;SOR_filter	ANN=C|missense_variant&splice_region_variant|MODERATE|cds00003|GENE_cds00003|transcript|mRNA00002|protein_coding|2/2|c.22C>G|p.Leu8Val|22/24|22/24|8/7||WARNING_TRANSCRIPT_NO_STOP_CODON,T|missense_variant&splice_region_variant|MODERATE|cds00003|GENE_cds00003|transcript|mRNA00002|protein_coding|2/2|c.22C>A|p.Leu8Ile|22/24|22/24|8/7||WARNING_TRANSCRIPT_NO_STOP_CODON,C|downstream_gene_variant|MODIFIER|cds00001|GENE_cds00001|transcript|mRNA00001|protein_coding||c.*9G>C|||||9|WARNING_TRANSCRIPT_NO_STOP_CODON,T|downstream_gene_variant|MODIFIER|cds00001|GENE_cds00001|transcript|mRNA00001|protein_coding||c.*9G>T|||||9|WARNING_TRANSCRIPT_NO_STOP_CODON,C|downstream_gene_variant|MODIFIER|mrna00001|null|transcript|mrna00001|protein_coding||c.*6G>C|||||6|WARNING_TRANSCRIPT_NO_START_CODON,T|downstream_gene_variant|MODIFIER|mrna00001|null|transcript|mrna00001|protein_coding||c.*6G>T|||||6|WARNING_TRANSCRIPT_NO_START_CODON,C|intragenic_variant|MODIFIER|gene00002|gene00002|gene_variant|gene00002|||n.36G>C||||||,T|intragenic_variant|MODIFIER|gene00002|gene00002|gene_variant|gene00002|||n.36G>T||||||,C|non_coding_transcript_variant|MODIFIER|mrna00001|null|transcript|mrna00002|protein_coding||||||||WARNING_TRANSCRIPT_NO_START_CODON,T|non_coding_transcript_variant|MODIFIER|mrna00001|null|transcript|mrna00002|protein_coding||||||||WARNING_TRANSCRIPT_NO_START_CODON	GT:DP:AD	0/1:60:10,30,20
+
+*******
+[['C', 'missense_variant&splice_region_variant', 'cds00003', 'mRNA00002', 'c.22C>G', 'p.Leu8Val'], ['T', 'missense_variant&splice_region_variant', 'cds00003', 'mRNA00002', 'c.22C>A', 'p.Leu8Ile']]
+1
+1
+*******
+c.22C>G
+c.22C>A
+c.*9G>C
+c.*9G>T
+c.*6G>C
+c.*6G>T
+n.36G>C
+n.36G>T
+c.22C>Gc.22C>Ac.*9G>Cc.*9G>Tc.*6G>Cc.*6G>Tn.36G>Cn.36G>T
+Chr01	56	.	A	C	65.28	FS_filter;SOR_filter	ANN=C|missense_variant|MODERATE|cds00003|GENE_cds00003|transcript|mRNA00002|protein_coding|1/2|c.5T>G|p.Phe2Cys|5/24|5/24|2/7||WARNING_TRANSCRIPT_NO_STOP_CODON,C|downstream_gene_variant|MODIFIER|cds00001|GENE_cds00001|transcript|mRNA00001|protein_coding||c.*29A>C|||||29|WARNING_TRANSCRIPT_NO_STOP_CODON,C|downstream_gene_variant|MODIFIER|mrna00001|null|transcript|mrna00001|protein_coding||c.*26A>C|||||26|WARNING_TRANSCRIPT_NO_START_CODON,C|intragenic_variant|MODIFIER|gene00002|gene00002|gene_variant|gene00002|||n.56A>C||||||,C|non_coding_transcript_variant|MODIFIER|mrna00001|null|transcript|mrna00002|protein_coding||||||||WARNING_TRANSCRIPT_NO_START_CODON	GT:DP:AD	0/1:60:10,50
+
+*******
+[['C', 'missense_variant', 'cds00003', 'mRNA00002', 'c.5T>G', 'p.Phe2Cys']]
+2
+*******
+c.5T>G
+c.*29A>C
+c.*26A>C
+n.56A>C
+c.5T>Gc.*29A>Cc.*26A>Cn.56A>C
+Chr01	57	.	A	T	65.28	FS_filter;SOR_filter	ANN=T|missense_variant|MODERATE|cds00003|GENE_cds00003|transcript|mRNA00002|protein_coding|1/2|c.4T>A|p.Phe2Ile|4/24|4/24|2/7||WARNING_TRANSCRIPT_NO_STOP_CODON,T|downstream_gene_variant|MODIFIER|cds00001|GENE_cds00001|transcript|mRNA00001|protein_coding||c.*30A>T|||||30|WARNING_TRANSCRIPT_NO_STOP_CODON,T|downstream_gene_variant|MODIFIER|mrna00001|null|transcript|mrna00001|protein_coding||c.*27A>T|||||27|WARNING_TRANSCRIPT_NO_START_CODON,T|intragenic_variant|MODIFIER|gene00002|gene00002|gene_variant|gene00002|||n.57A>T||||||,T|non_coding_transcript_variant|MODIFIER|mrna00001|null|transcript|mrna00002|protein_coding||||||||WARNING_TRANSCRIPT_NO_START_CODON	GT:DP:AD	0/1:30:10,20
+
+*******
+[['T', 'missense_variant', 'cds00003', 'mRNA00002', 'c.4T>A', 'p.Phe2Ile']]
+1
+*******
+c.4T>A
+c.*30A>T
+c.*27A>T
+n.57A>T
+c.4T>Ac.*30A>Tc.*27A>Tn.57A>T
+Chr01	59	.	A	G	65.28	FS_filter;SOR_filter	ANN=G|start_lost|HIGH|cds00003|GENE_cds00003|transcript|mRNA00002|protein_coding|1/2|c.2T>C|p.Met1?|2/24|2/24|1/7||WARNING_TRANSCRIPT_NO_STOP_CODON,G|downstream_gene_variant|MODIFIER|cds00001|GENE_cds00001|transcript|mRNA00001|protein_coding||c.*32A>G|||||32|WARNING_TRANSCRIPT_NO_STOP_CODON,G|downstream_gene_variant|MODIFIER|mrna00001|null|transcript|mrna00001|protein_coding||c.*29A>G|||||29|WARNING_TRANSCRIPT_NO_START_CODON,G|intragenic_variant|MODIFIER|gene00002|gene00002|gene_variant|gene00002|||n.59A>G||||||,G|non_coding_transcript_variant|MODIFIER|mrna00001|null|transcript|mrna00002|protein_coding||||||||WARNING_TRANSCRIPT_NO_START_CODON;LOF=(cds00003|GENE_cds00003|1|1.00)	GT:DP:AD	0/1:100:0,100
+
+*******
+[['G', 'start_lost', 'cds00003', 'mRNA00002', 'c.2T>C', 'p.Met1?']]
+2
+*******
+c.2T>C
+c.*32A>G
+c.*29A>G
+n.59A>G
+c.2T>Cc.*32A>Gc.*29A>Gn.59A>G
+Chr01	KBase	gene	1	30	.	+	0	ID=gene00001;Name=gene00001
+ID=gene00001;Name=gene00001
+gene00001
+Chr01
+Chr01	KBase	mRNA	1	30	.	+	0	ID=mrna00001;Name=mrna00001
+Chr01	KBase	CDS	1	12	.	+	0	ID=cds00001;Parent=mRNA00001;Name=cds00001
+Chr01	KBase	CDS	16	27	.	+	0	ID=cds00002;Parent=mRNA00001;Name=cds00002
+Chr01	KBase	gene	31	60	.	-	0	ID=gene00002;Name=gene00002
+ID=gene00002;Name=gene00002
+gene00002
+Chr01
+Chr01	KBase	mRNA	31	60	.	-	0	ID=mrna00002;Name=mrna00002
+Chr01	KBase	CDS	34	45	.	-	0	ID=cds00003;Parent=mRNA00002;Name=cds00003
+Chr01	KBase	CDS	49	60	.	-	0	ID=cds00003;Parent=mRNA00002;Name=cds00004

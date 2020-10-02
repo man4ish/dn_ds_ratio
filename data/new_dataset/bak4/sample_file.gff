@@ -1,0 +1,9 @@
+##gff-version 3.1.26
+Chr01	KBase	gene	1	30	.	+	0	ID=gene00001;Name=gene00001
+Chr01	KBase	mRNA	1	30	.	+	0	ID=mrna00001;Name=mrna00001
+Chr01	KBase	CDS	1	12	.	+	0	ID=cds00001;Parent=mRNA00001;Name=cds00001
+Chr01	KBase	CDS	16	27	.	+	0	ID=cds00002;Parent=mRNA00001;Name=cds00002
+Chr01	KBase	gene	31	60	.	-	0	ID=gene00002;Name=gene00002
+Chr01	KBase	mRNA	31	60	.	-	0	ID=mrna00002;Name=mrna00002
+Chr01	KBase	CDS	34	45	.	-	0	ID=cds00003;Parent=mRNA00002;Name=cds00003
+Chr01	KBase	CDS	49	60	.	-	0	ID=cds00003;Parent=mRNA00002;Name=cds00004
