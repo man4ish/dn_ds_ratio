@@ -151,14 +151,17 @@ class parse_dataUtils:
                 trascipt_seq = ''
                 diffmap = {}
                 cds_global_pos_map = {}
-                for gene_id, cds_list in genes.items():
+                for gene_id, cds_dict in genes.items():
+
 
                     c = 1
 
                     #min = cds_list[0][0]
                     #print("min = " + min)
-
+                    cds_list = cds_dict['cds_coordinates']
+                    orientation = cds_dict['orient']
                     for cds_coordinates in cds_list:
+
                         if(c > 1):
                             #print(cds_coordinates)
                             #print(c)
@@ -184,7 +187,8 @@ class parse_dataUtils:
                     #print(gene_id, trascipt_seq)
                     #print(posmap)
                     #print(diffmap)
-
+                    if(orientation == '-'):
+                        trascipt_seq = self.reverse_complement(trascipt_seq)
                     #TODO: if orientation is '-' , reverse transcribe the sequence(trascipt_seq)
 
                     fkey  = list(diffmap.keys())[0]
@@ -379,7 +383,7 @@ class parse_dataUtils:
 
 if __name__ == "__main__":
     pu = parse_dataUtils()
-    rev_comp = pu.reverse_complement("ATCGTGTT")
+    #rev_comp = pu.reverse_complement("ATCGTGTT")
 
 
     dir = "/Users/manishkumar/Desktop/apps/SNPGenie/Analysis_with_ADinInfo/code/data/new_dataset"
@@ -395,7 +399,7 @@ if __name__ == "__main__":
             var_temp.writerow(var_gene_list)
 
     gff_data = pu.read_gff_file(os.path.join(dir, "sample_file.gff"))
-    exit(gff_data)
+
     codon_list = pu.get_triplets(sequence, gff_data)
     #print(codon_list)
 
