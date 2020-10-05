@@ -1,0 +1,6 @@
+Chr01	T	C	2	1	2	1	ATG	start_lost	{'A': 0, 'C': 100, 'G': 0, 'T': 10}
+Chr01	T	A	4	2	1	4	TTT	missense_variant	{'A': 20, 'C': 0, 'G': 0, 'T': 10}
+Chr01	T	G	5	2	2	4	TTT	missense_variant	{'A': 0, 'C': 0, 'G': 50, 'T': 10}
+Chr01	C	G	25	8	1	25	CTA	splice_region_variant&synonymous_variant	{'A': 0, 'C': 10, 'G': 30, 'T': 0}
+Chr01	T	C	26	8	2	25	CTA	splice_region_variant&synonymous_variant	{'A': 0, 'C': 200, 'G': 0, 'T': 10}
+Chr01	A	G	27	-	-	-	CTA	-	{'A': 10, 'C': 0, 'G': 200, 'T': 0}
